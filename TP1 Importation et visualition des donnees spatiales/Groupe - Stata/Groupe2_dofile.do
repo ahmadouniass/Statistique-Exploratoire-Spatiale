@@ -1,3 +1,10 @@
+*************************************************************************************************************
+********* TP1 Statistique exploratoire spatiale
+********* Files : "civ_admbnda_adm0_cntig_20180706_em.shp" "civ_admbnda_adm0_cntig_20180706_em.dbf" 
+********* Last update : October 2024
+********* Authors : Mame Balla BOUSSO, Hiledegarde EDIMA BIYENDA, Ameth FAYE and Papa Amadou NIANG  
+*************************************************************************************************************
+
 // Installation des packages nécessaires
 ssc install spmap
 ssc install shp2dta
@@ -7,6 +14,9 @@ shp2dta using "D:\Statistique exploratoire spatiale\Cours2\Statistique-Explorato
 
 // Chargement des données
 use civdb, clear
+
+// Création de la carte
+spmap using civcoord, id(id) 
 
 // Création de la carte
 spmap using civcoord, id(id) ///
