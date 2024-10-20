@@ -1,0 +1,45 @@
+// Variables pour définir les couleurs et contours
+var visParamsn0 = {
+  color: 'red',  // Couleur des contours
+  fillColor: 'blue',  // couleur de remplissage
+  width: 1.5  // Largeur des contours
+};
+
+var visParamsn1 = {
+  color: 'green',  // Couleur des contours
+  fillColor: 'red',  // couleur de remplissage
+  width: 1.5  // Largeur des contours
+};
+
+// Ajouter la couche 0 à la carte 
+Map.addLayer(Sn0.style(visParamsn0), {}, 'Carte du Sénégal');
+
+// Centrer la carte sur cette couche
+Map.centerObject(Sn0, 6);
+
+// Ajouter la couche 1 à la carte 
+Map.addLayer(regions.style(visParamsn1), {}, 'Régions');
+
+// Centrer la carte sur cette couche
+Map.centerObject(regions, 6);
+
+// Ajouter la couche 2 à la carte 
+Map.addLayer(departements, {color: 'red'}, 'Départements');
+
+// Centrer la carte sur cette couche
+Map.centerObject(departements, 6);
+
+// Ajouter la couche 3 à la carte 
+Map.addLayer(communes, {color: 'purple'}, 'Commune');
+
+// Centrer la carte sur cette couche
+Map.centerObject(communes, 6);
+
+// Ajouter le raster1 à la carte 
+Map.addLayer(raster1, {}, 'Global Motorized Travel Time to Healthcare');
+
+// Ajouter le raster2 à la carte 
+Map.addLayer(raster2, {}, 'Global Walking Only Travel Time To Healthcare');
+
+// Ajouter le raster3 à la carte 
+Map.addLayer(raster3, {}, 'Global Travel Time to Cities');
