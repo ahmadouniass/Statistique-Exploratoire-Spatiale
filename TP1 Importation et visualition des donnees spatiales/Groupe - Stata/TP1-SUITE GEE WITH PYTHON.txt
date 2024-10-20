@@ -1,0 +1,28 @@
+// Charger le shapefile
+var shapefile = ee.FeatureCollection("projects/ee-papaamadouniang2004/assets/civ_admbnda_adm0_cntig_20180706_em");
+
+// Obtenir la projection (CRS)
+var firstFeature = shapefile.first();
+var projection = firstFeature.geometry().projection();
+print("Projection du shapefile :", projection);
+
+// Obtenir l'étendu (bounds)
+var bounds = shapefile.geometry().bounds();
+print("Extension du shapefile :", bounds);
+
+
+
+// Charger le raster (Image)
+var raster = ee.Image("projects/ee-papaamadouniang2004/assets/202001_Global_Motorized_Travel_Time_to_Healthcare_CIV");
+
+// Obtenir la projection (CRS)
+var projection = raster.projection();
+print("Projection du raster (CRS) :", projection);
+
+// Obtenir la taille des pixels
+var pixelSize = raster.projection().nominalScale();
+print("Taille des pixels (en mètres) :", pixelSize);
+
+// Obtenir l'étendu (bounds)
+var bounds = raster.geometry().bounds();
+print("Extension du raster :", bounds);
