@@ -1,0 +1,237 @@
+///////////////////////////////////////////////////////////////////////////////////////////////
+////      ECOLE NATIONALE DE LA STATISTIQUE ET DE L'ANALYSE ECONOMIQUE PIERRE NDIAYE     /////
+////          COURS DE STATISTIQUES EXPLORATOIRE ET SPATIALE - ISE1_CYCLE LONG          /////
+////                           ENSEIGNANT: MR HEMA                                     /////
+////                   TP2_GOOGLE EARTH ENGINE AVEC JAVASCRIPT                        /////
+////                  MEMBRES: FOGWOUNG DJOUFACK SARAH-LAURE                         /////
+////                           NGUEMFOUO NGOUMTSA CELINA                            /////
+////                           NIASS AHMADOU                                       /////
+////                           SENE MALICK                                        /////
+//////////////////////////////////////////////////////////////////////////////////////
+
+/// CONSIGNE:
+/// SECTION 1 : DONNEES VECTORIELLES 
+///     - Importer les pays 
+///     - Calculs statistiques: nombre de géométries suivant les levels, superficie de chaque feature, projection, CRS, Extent, centroides
+///     - Visualisation
+/// SECTION 2 : RASTER
+///     - Importer les rasters et visualiser 
+///     - Calcul de moyenne, médiane, écart type, minimum, maximum, et retourner une seule image pour chaque statistique
+
+
+///////////////////////////////////////////SECTION1////////////////////////////////////////////////
+/// IMPORTATION DES SHAPEFILES 
+// Les découpages administratifs sont successivement regions, provinces, arrondissements et communes 
+
+// Ajout des couches à la carte 
+Map.addLayer(Madagascar, {color: 'red'}, 'Madagascar');
+Map.addLayer(Madagascar_regions, {color: 'purple'}, 'Madagascar_regions');
+Map.addLayer(Madagascar_provinces, {color: 'green'}, 'Madagascar_provinces');
+Map.addLayer(Madagascar_arrondissements, {color: 'yellow'}, 'Madagascar_arrondissements');
+Map.addLayer(Madagascar_communes, {color: 'blue'}, 'Madagascar_communes');
+Map.centerObject(Madagascar, 4);
+
+// nombre des géométries suivant chaque niveau
+var geometrie_Madagascar = Madagascar.size();
+print('Geometries de la couche Madagascar :', geometrie_Madagascar);
+var geometrie_Regions = Madagascar_regions.size();
+print('Geometries de la couche Madagascar_Regions :', geometrie_Regions);
+var geometrie_provinces = Madagascar_provinces.size();
+print('Geometries de la couche Madagascar_provinces :', geometrie_provinces);
+var geometrie_arrondissements = Madagascar_arrondissements.size();
+print('Geometries de la couche Madagascar_arrondissements :', geometrie_arrondissements);
+var geometrie_communes = Madagascar_communes.size();
+print('Geometries de la couche Madagascar_communes :', geometrie_communes);
+
+// Superficie pour chaque niveau
+/// PAYS
+var featuresWithArea = Madagascar.map(function(feature) {
+        var area = feature.geometry().area().divide(1e6);  // Convertir en km²
+        return feature.set('area_km2', area);  // Ajouter la superficie comme propriété
+      });
+      featuresWithArea.evaluate(function(fc) {
+        var totalArea = 0;
+        fc.features.forEach(function(f) {
+          var area = f.properties.area_km2;
+          print('Superficie de la géométrie_pays (km²) :', area);
+          totalArea += area;
+        });
+      });
+
+/// REGIONS
+ var featuresWithArea = Madagascar_regions.map(function(feature) {
+        var area = feature.geometry().area().divide(1e6);  // Convertir en km²
+        return feature.set('area_km2', area);  // Ajouter la superficie comme propriété
+      });
+      featuresWithArea.evaluate(function(fc) {
+        var totalArea = 0;
+        fc.features.forEach(function(f) {
+          var area = f.properties.area_km2;
+          print('Superficie de la géométrie_région (km²) :', area);
+          totalArea += area;
+        });
+      });  
+
+//PROVINCES 
+var featuresWithArea = Madagascar_provinces.map(function(feature) {
+        var area = feature.geometry().area().divide(1e6);  // Convertir en km²
+        return feature.set('area_km2', area);  // Ajouter la superficie comme propriété
+      });
+
+///ARRONDISSEMENTS
+var featuresWithArea = Madagascar_arrondissements.map(function(feature) {
+        var area = feature.geometry().area().divide(1e6);  // Convertir en km²
+        return feature.set('area_km2', area);  // Ajouter la superficie comme propriété
+      });
+      
+///COMMUNES 
+var featuresWithArea = Madagascar_communes.map(function(feature) {
+        var area = feature.geometry().area().divide(1e6);  // Convertir en km²
+        return feature.set('area_km2', area);  // Ajouter la superficie comme propriété
+      });
+  
+      
+// AFFICHAGE DU CRS (PROJECTION ET DATUM)
+var projection_Madagascar = Madagascar.geometry().projection();
+print('Projection de la couche Madagascar :', projection_Madagascar);
+      // OU on transforme en image pour appliquer directement la fonction .projection
+var image_Madagascar = ee.Image.pixelLonLat().clip(Madagascar); // Créez une image avec des données de latitude/longitude
+var projection_Madagascar = image_Madagascar.projection();
+print('Projection du raster est :', projection_Madagascar);
+
+// EXTENT
+var extent_Madagascar = Madagascar.geometry().bounds();
+print('Extent de la couche Madagascar :', extent_Madagascar);
+
+//CENTROIDES POUR CHAQUE DECOUPAGE ET VISUALISATION
+      // FONCTION POUR LA VISUALISATION
+function addCentroidsLayer(featureCollection, layerName, color) {
+      var centroidsLayer = featureCollection.map(function(feature) {
+        return ee.Feature(feature.get('centroid'));  // Récupérer le centroïde
+      });
+    Map.addLayer(centroidsLayer.style({color: color, pointSize: 5}), {}, layerName);
+    }
+
+///PAYS
+var pays_centroids = Madagascar.map(function(feature) {
+        var centroid = feature.geometry().centroid();
+        return feature.set('centroid', centroid);  // Ajouter le centroïde aux propriétés
+      });
+      pays_centroids.evaluate(function(fc) {
+        var features = fc.features;
+        features.forEach(function(f) {
+          var coords = f.properties.centroid.coordinates;
+          print('Coordonnées du centroïde_pays:', coords);
+        });
+      });
+addCentroidsLayer(pays_centroids, 'Centroïdes - Pays', 'blue');
+
+
+//REGIONS
+      var region_centroids = Madagascar_regions.map(function(feature) {
+        var centroid = feature.geometry().centroid();
+        return feature.set('centroid', centroid);  // Ajouter le centroïde aux propriétés
+      });
+      region_centroids.evaluate(function(fc) {
+        var features = fc.features;
+        features.forEach(function(f) {
+          var coords = f.properties.centroid.coordinates;
+          print('Coordonnées du centroïde_région:', coords);
+        });
+      });
+addCentroidsLayer(region_centroids, 'Centroïdes - Region', 'yellow');
+
+      
+//PROVINCES
+      var province_centroids = Madagascar_provinces.map(function(feature) {
+        var centroid = feature.geometry().centroid();
+        return feature.set('centroid', centroid);  // Ajouter le centroïde aux propriétés
+      });
+addCentroidsLayer(province_centroids, 'Centroïdes - Province', 'red');
+      
+//ARRONDISSEMENTS
+      var arrondissement_centroids = Madagascar_arrondissements.map(function(feature) {
+        var centroid = feature.geometry().centroid();
+        return feature.set('centroid', centroid);  // Ajouter le centroïde aux propriétés
+      });
+addCentroidsLayer(arrondissement_centroids, 'Centroïdes - Arrondissement', 'green');
+
+//COMMUNES
+      var communes_centroids = Madagascar_communes.map(function(feature) {
+        var centroid = feature.geometry().centroid();
+        return feature.set('centroid', centroid);  // Ajouter le centroïde aux propriétés
+      });
+addCentroidsLayer(communes_centroids, 'Centroïdes - Commune', 'purple');
+
+
+/////////////////////////////////////    SECTION2     /////////////////////////////////////////
+
+Map.addLayer(Parasite_Rate_MDG_2022, {} ,'Parasite_Rate_MDG_2022');
+Map.addLayer(Parasite_Rate_MDG_2021, {} ,'Parasite_Rate_MDG_2021');
+Map.addLayer(Parasite_Rate_MDG_2020, {} ,'Parasite_Rate_MDG_2020');
+Map.addLayer(Parasite_Rate_MDG_2019, {} ,'Parasite_Rate_MDG_2019');
+Map.addLayer(Parasite_Rate_MDG_2018, {} ,'Parasite_Rate_MDG_2018');
+
+//CREATION D'UNE COLLECTION D'IMAGES A PARTIR DE CELLES IMPORTEES
+var malariaCollection = ee.ImageCollection([Parasite_Rate_MDG_2022, Parasite_Rate_MDG_2021, Parasite_Rate_MDG_2020, Parasite_Rate_MDG_2019, Parasite_Rate_MDG_2018]);
+
+// Calcul de la moyenne
+var moyenne = malariaCollection.mean();
+print('La moyenne:', moyenne);
+
+// Calcul de la médiane
+var mediane = malariaCollection.median();
+print('Médiane:', mediane);
+
+// Calcul de l'écart-type
+var ecartType = malariaCollection.reduce(ee.Reducer.stdDev());
+print('Écart-Type:', ecartType);
+
+// Calcul du minimum
+var min = malariaCollection.min();
+print('Minimum:', min);
+
+// Calcul du maximum
+var max = malariaCollection.max();
+print('Maximum:', max);
+
+/// VISUALISATION
+// Concatenons ensemble les statistiques comme des bandes différentes
+var statistiques = moyenne.addBands(mediane)
+                          .addBands(ecartType)
+                          .addBands(min)
+                          .addBands(max);
+
+
+// *Sélectionner les bandes d'intérêt et renommer les bandes*
+var bandeNames = ['moyenne', 'mediane', 'ecart_type', 'min', 'max'];
+var bandeCount = statistiques.bandNames().size();  // Compter le nombre de banades pour chaque stat
+
+// Renommer les bandes uniquement si le nombre de bandes est correct
+var nouveauNoms = ee.List.sequence(0, bandeCount.subtract(1)).map(function(i) {
+  // Utilisation d'un format valide pour formater les indices
+  return ee.String('statistique_').cat(ee.Number(i).format('%d'));  // Formater les indices comme entiers
+});
+
+// Renommer les bandes
+statistiques = statistiques.rename(nouveauNoms);
+
+// *Affichage des couches* avec les noms corrects
+Map.centerObject(Madagascar, 6);
+// Utiliser les noms corrects des bandes après renommage
+Map.addLayer(statistiques.select('statistique_0'), {min: 0, max: 1, palette: ['blue', 'green', 'red']}, 'Moyenne');
+Map.addLayer(statistiques.select('statistique_1'), {min: 0, max: 1, palette: ['yellow', 'orange', 'brown']}, 'Médiane');
+Map.addLayer(statistiques.select('statistique_2'), {min: 0, max: 0.5, palette: ['white', 'purple']}, 'Écart-Type');
+Map.addLayer(statistiques.select('statistique_3'), {min: 0, max: 1, palette: ['green', 'orange']}, 'Min');
+Map.addLayer(statistiques.select('statistique_4'), {min: 0, max: 1, palette: ['pink', 'yellow']}, 'Max');
+
+// Exporter l'image résultante si besoin
+Export.image.toDrive({
+  image: statistiques,
+  description: 'Statistiques_Malaria_Madagascar',
+  scale: 1000,
+  region: Madagascar.geometry(),  // Ajuster si vous avez une zone spécifique
+  fileFormat: 'GeoTIFF'
+});
+
+
