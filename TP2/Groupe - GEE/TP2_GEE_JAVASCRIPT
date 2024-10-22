@@ -34,10 +34,13 @@ Map.centerObject(Madagascar, 4);
 // nombre des géométries suivant chaque niveau
 var geometrie_Madagascar = Madagascar.size();
 print('Geometries de la couche Madagascar :', geometrie_Madagascar);
+
 var geometrie_Regions = Madagascar_regions.size();
 print('Geometries de la couche Madagascar_Regions :', geometrie_Regions);
+
 var geometrie_provinces = Madagascar_provinces.size();
 print('Geometries de la couche Madagascar_provinces :', geometrie_provinces);
+
 var geometrie_arrondissements = Madagascar_arrondissements.size();
 print('Geometries de la couche Madagascar_arrondissements :', geometrie_arrondissements);
 var geometrie_communes = Madagascar_communes.size();
@@ -174,13 +177,14 @@ Map.addLayer(Parasite_Rate_MDG_2018, {} ,'Parasite_Rate_MDG_2018');
 
 //CREATION D'UNE COLLECTION D'IMAGES A PARTIR DE CELLES IMPORTEES
 var malariaCollection = ee.ImageCollection([Parasite_Rate_MDG_2022, Parasite_Rate_MDG_2021, Parasite_Rate_MDG_2020, Parasite_Rate_MDG_2019, Parasite_Rate_MDG_2018]);
-
+ 
+ // SANS ENLEVER LES DONNEES MANQUANTES 
 // Calcul de la moyenne
-var moyenne = malariaCollection.mean();
+var moyenne = malariaCollection.reduce(ee.Reducer.mean());
 print('La moyenne:', moyenne);
 
 // Calcul de la médiane
-var mediane = malariaCollection.median();
+var mediane = malariaCollection.reduce(ee.Reducer.median());
 print('Médiane:', mediane);
 
 // Calcul de l'écart-type
@@ -188,12 +192,13 @@ var ecartType = malariaCollection.reduce(ee.Reducer.stdDev());
 print('Écart-Type:', ecartType);
 
 // Calcul du minimum
-var min = malariaCollection.min();
+var min = malariaCollection.reduce(ee.Reducer.min());
 print('Minimum:', min);
 
 // Calcul du maximum
-var max = malariaCollection.max();
+var max = malariaCollection.reduce(ee.Reducer.max());
 print('Maximum:', max);
+
 
 /// VISUALISATION
 // Concatenons ensemble les statistiques comme des bandes différentes
@@ -234,4 +239,88 @@ Export.image.toDrive({
   fileFormat: 'GeoTIFF'
 });
 
+////// NE PAS CONSIDERANT LES VALEURS MANQUANTES
+// Masquer les valeurs de -9999 (NA)
+var imageSansNA = statistiques.updateMask(statistiques.neq(-9999));
+
+// Calcul du minimum sans NA
+var maxImage = imageSansNA.reduce(ee.Reducer.max());
+
+var minimumImage = imageSansNA.reduce(ee.Reducer.min());
+var medianeImage = imageSansNA.reduce(ee.Reducer.median());
+var moyenneImage = imageSansNA.reduce(ee.Reducer.mean());
+var ecarttypeImage = imageSansNA.reduce(ee.Reducer.stdDev());
+// Utiliser les noms corrects des bandes après renommage
+Map.addLayer(moyenneImage, {min: 0, max: 1, palette: ['blue', 'green', 'red']}, 'Moyenne2');
+Map.addLayer(medianeImage, {min: 0, max: 0.5, palette: ['yellow', 'orange']}, 'Médiane2');
+Map.addLayer(ecarttypeImage, {min: 0, max: 1, palette: ['white', 'purple']}, 'Écart-Type2');
+Map.addLayer(minimumImage, {min: 0, max: 0.1, palette: ['red', 'darkblue']}, 'Min2');
+Map.addLayer(maxImage, {min: 0, max: 0.1, palette: ['pink', 'red']}, 'Max2');
+///////
+ 
+ /////////// AUTRES CARACTERISTIQUES 
+// Pour afficher la projection: manière dont les  données géographiques sont transformées en coordonnées plates sur une carte (par exemple, WGS84, UTM, etc.). La projection  est essentielle pour que les distances et les emplacements surla carte soient précis.
+var projection_raster = Parasite_Rate_MDG_2018.projection();
+print('Projection du raster est :', projection_raster);
+
+
+// Visualisation de la taille des pixels en mètres= resolution spatiale. Un pixel est une zone carrée sur le sol et cette valeur indique les dimensions de cette zone. For eg, si la taille des pixels= 1000metres alors chaque pixel couvre une surface de 1000metres carré sur le terrain
+
+// Taille des pixels en metres: renvoie la taille que represente un pixel dans la réalité, donc si on a 30m ca veut dire que chaque pixel couvre une surface de 30*30 metres carré
+var scale = projection_raster.nominalScale();
+print('Taille des pixels (mètres) :', scale);
+
+// Taille de l'image en pixels (hauteur et largeur de l'image en pixels)
+var imageInfo = Parasite_Rate_MDG_2018.getInfo();
+print('Taille de l\'image raster :', imageInfo.bands[0].dimensions);
+
+// Calcul du nombre total de pixels dans le raster 
+var pixelCount = Parasite_Rate_MDG_2018.reduceRegion({
+  reducer: ee.Reducer.count(),
+  geometry: Parasite_Rate_MDG_2018.geometry(),
+  scale: scale,
+  maxPixels: 1e13
+});
+print('Nombre total de pixels dans le raster :', pixelCount);
+
+// Création d'un polygone autour d'un point spécifique qui est l'ANSD
+//var pixelSize = 1000;  // Taille du pixel
+//var ansdPoint = ee.Geometry.Point([-17.449599, 14.699173]);
+//var pixelPolygon = ansdPoint.buffer(pixelSize / 2).bounds();
+//print('Polygone du Pixel:', pixelPolygon);
+//Map.centerObject(pixelPolygon, 14);
+
+// Afficher une grille de pixels
+//var pixelGrid = ee.Image.pixelLonLat()
+  //.reproject(projection.atScale(pixelSize))
+  //.clip(table);
+//Map.addLayer(pixelGrid, {bands: ['latitude'], min: minLat, max: maxLat, palette: ['white', 'black']}, 'Grille de Pixels');
+
+//Ajouter les couches géométriques à la carte 
+//Map.addLayer(pixelPolygon, {color: 'red'}, 'Pixel Unique');
+//Map.addLayer(table.style({color: 'yellow', fillColor: '00000000'}), {}, 'Shapefile');
+//Map.addLayer(image, {min: 0, max: 3000, palette: ['blue', 'green', 'red']}, 'Raster');
+
+// Statistiques des pixels 
+var stats = Parasite_Rate_MDG_2018.reduceRegion({
+  reducer: ee.Reducer.mean().combine(ee.Reducer.minMax(), '', true), // Pour calculer le min,max, moyenne de taille des pixels 
+  geometry: Parasite_Rate_MDG_2018.geometry(), // Spécifie la region de calcul des stats 
+ scale: 1000 // specifie que chaque pixel representera 1000m de coté
+});
+print('Statistiques des pixels :', stats);
+
+// VISUALISATION DE L'ETENDUE GEOGRAPHIQUE DE L'IMAGE
+var extent = Parasite_Rate_MDG_2018.geometry().bounds();
+print('Extent (limites géographiques) de la couche Madagascar :', extent);
+
+var extent2 = Parasite_Rate_MDG_2018.geometry();
+print('Extent (limites géographiques) de la couche Madagascar :', extent2); // La difference ici est que ca sort les coordonnées de tous les points extremes 
+
+// Calcul de la superficie en KM CARRE
+var area = Madagascar.geometry().area({maxError: 1}).divide(1e6); // la superficie renvoyée est de base en metres carrée mais avec les arguments qu'on a mis, on aura l'erreur maximale à 1metre et on a divisé par 10e6 pour convertir en KM CARRES
+print('Superficie de la couche Madagascar (en km²) :', area);
+
+// Calcul du périmetre en m
+var perimeter = Madagascar.geometry().perimeter({maxError: 1});
+print('Périmètre de la couche Madagascar (en mètres) :', perimeter);
 
