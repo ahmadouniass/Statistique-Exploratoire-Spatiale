@@ -4,6 +4,21 @@ Le cours de Statistique Exploratoire Spatiale est dispense par Mr Hema Aboubacar
 
 ## Data Credits
 
+### TP 1
+
+### TP 2
+
+### TP 3
+
+### TP 4
+
+### TP 5
+
+### TP 6
+
+### TP 8
+
+
 
 
 ## License
