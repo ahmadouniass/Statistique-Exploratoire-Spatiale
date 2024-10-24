@@ -43,3 +43,78 @@ Map.addLayer(raster2, {}, 'Global Walking Only Travel Time To Healthcare');
 
 // Ajouter le raster3 à la carte 
 Map.addLayer(raster3, {}, 'Global Travel Time to Cities');
+
+// DEUXIEME PARTIE DU DEVOIR 
+// Pour afficher la projection: manière dont les  données géographiques sont transformées en coordonnées plates sur une carte (par exemple, WGS84, UTM, etc.). La projection  est essentielle pour que les distances et les emplacements surla carte soient précis.
+// Pour un raster en général c'est ESPG: 4326
+var projection_raster = image.projection();
+print('Projection du raster est :', projection_raster);
+// Pour un shapefile
+var projection_vecteur = image.projection();
+print('Projection du vecteur est :', projection_vecteur);
+
+
+// Visualisation de la taille des pixels en mètres= resolution spatiale. Un pixel est une zone carrée sur le sol et cette valeur indique les dimensions de cette zone. For eg, si la taille des pixels= 1000metres alors chaque pixel couvre une surface de 1000metres carré sur le terrain
+
+// Taille des pixels en metres: renvoie la taille que represente un pixel dans la réalité, donc si ans=30m ca veut dire que chaque pixel couvre une surface de 30*30 metres carré
+var scale = projection_raster.nominalScale();
+print('Taille des pixels (mètres) :', scale);
+
+// Taille de l'image en pixels (hauteur et largeur de l'image en pixels)
+var imageInfo = image.getInfo();
+print('Taille de l\'image raster :', imageInfo.bands[0].dimensions);
+
+// Calcul du nombre total de pixels dans le raster 
+var pixelCount = image.reduceRegion({
+  reducer: ee.Reducer.count(),
+  geometry: image.geometry(),
+  scale: scale,
+  maxPixels: 1e13
+});
+print('Nombre total de pixels dans le raster :', pixelCount);
+
+// Création d'un polygone autour d'un point spécifique qui est l'ANSD
+var pixelSize = 1000;  // Taille du pixel
+var ansdPoint = ee.Geometry.Point([-17.449599, 14.699173]);
+var pixelPolygon = ansdPoint.buffer(pixelSize / 2).bounds();
+print('Polygone du Pixel:', pixelPolygon);
+Map.centerObject(pixelPolygon, 14);
+
+// Afficher une grille de pixels
+var pixelGrid = ee.Image.pixelLonLat()
+  .reproject(projection.atScale(pixelSize))
+  .clip(table);
+Map.addLayer(pixelGrid, {bands: ['latitude'], min: minLat, max: maxLat, palette: ['white', 'black']}, 'Grille de Pixels');
+
+//Ajouter les couches géométriques à la carte 
+Map.addLayer(pixelPolygon, {color: 'red'}, 'Pixel Unique');
+Map.addLayer(table.style({color: 'yellow', fillColor: '00000000'}), {}, 'Shapefile');
+Map.addLayer(image, {min: 0, max: 3000, palette: ['blue', 'green', 'red']}, 'Raster');
+
+// Statistiques des pixels 
+var stats = image.reduceRegion({
+  reducer: ee.Reducer.mean().combine(ee.Reducer.minMax(), '', true), // Pour calculer le min,max, moyenne de taille des pixels 
+  geometry: image.geometry(), // Spécifie la region de calcul des stats 
+  scale: 1000 // specifie que chaque pixel representera 1000m de coté
+});
+print('Statistiques des pixels :', stats);
+
+// VISUALISATION DE L'ETENDUE GEOGRAPHIQUE DE L'IMAGE
+var extent = image.geometry().bounds();
+print('Extent (limites géographiques) de la couche Sénégal :', extent);
+
+var extent2 = image.geometry();
+print('Extent (limites géographiques) de la couche Sénégal :', extent2); // La difference ici est que ca sort les coordonnées de tous les points extremes 
+
+// Calcul de la superficie en KM CARRE
+var area = image.geometry().area({maxError: 1}).divide(1e6); // la superficie renvoyée est de base en metres carrée mais avec les arguments qu'on a mis, on aura l'erreur maximale à 1metre et on a divisé par 10e6 pour convertir en KM CARRES
+print('Superficie de la couche Sénégal (en km²) :', area);
+
+// Calcul du périmetre en m
+var perimeter = image.geometry().perimeter({maxError: 1});
+print('Périmètre de la couche Sénégal (en mètres) :', perimeter);
+
+// Calcul du centroide 
+var centroid = image.geometry().centroid();
+print('Centre géométrique de la couche Sénégal :', centroid);
+
