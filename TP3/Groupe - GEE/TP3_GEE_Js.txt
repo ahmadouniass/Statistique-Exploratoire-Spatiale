@@ -24,10 +24,6 @@ var rasteur = ee.Image("projects/tp3sespatiales/assets/mean"),
 
 
 
-// Centrage de la carte sur Madagascar
-Map.centerObject(Cameroun, 4);
-
-
 // Prendre la première bande
 var image = rasteur.select([0]); 
 
