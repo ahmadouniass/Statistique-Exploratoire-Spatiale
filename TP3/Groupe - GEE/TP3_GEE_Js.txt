@@ -51,7 +51,7 @@ function getZonalList(shapefile, raster, regionField) {
   var zonalStatistics = zonalStats.map(function(feature) {
     var zoneName = feature.get(regionField); // Nom de la zone
     var meanValue = feature.get('mean'); // Valeur moyenne obtenue
-    var centroid = feature.geometry().centroid(); // Centroïde
+    
 
     return ee.Feature(null, {
       'zone': zoneName,
