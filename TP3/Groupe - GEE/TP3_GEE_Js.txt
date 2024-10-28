@@ -151,6 +151,8 @@ Map.addLayer(labels_final, {}, "Polygon label");
 
 
 // Exporting the tables
+// It requires to have feature collections first...
+
  var zonalStats2 = image.reduceRegions({
     collection: shapefile2,
     reducer: ee.Reducer.mean(),
