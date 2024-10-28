@@ -199,14 +199,55 @@ print(resultats_communebf)
 # f. Affichage des données vectorielles
 
 # Afficher les shapefiles en utilisant ggplot2
-print("Affichage des données vectorielles :")
+# CODE MODIFIE. Version du TP3 améliorée avec des éléments de carte : flèche du nord et légende
+# CODE MODIFIE. Version du TP3 améliorée avec des éléments de carte : flèche du nord et légende
+# CODE MODIFIE. Version du TP3 améliorée avec des éléments de carte : flèche du nord et légende
+
+
+# Rechargeons les packages ggplot2 and ggspatial
+library(ggplot2)
+library(ggspatial)
+
+print("Affichons les vecteurs :")
 ggplot() +
-  geom_sf(data = burkinafaso, fill = "lightblue", color = "black", alpha = 0.5) +
-  geom_sf(data = regionbf, fill = NA, color = "red") +
-  geom_sf(data = provincebf, fill = NA, color = "green") +
-  geom_sf(data = communebf, fill = NA, color = "blue") +
-  ggtitle("Carte des niveaux administratifs du Burkina Faso") +
+  # Burkina Faso
+  geom_sf(data = burkinafaso, fill = "lightblue", color = "black", alpha = 0.5, show.legend = TRUE, 
+          aes(fill = "Carte au niveau zéro")) +
+  
+  # Régions
+  geom_sf(data = regionbf, fill = NA, color = "red", show.legend = TRUE, 
+          aes(color = "Carte au niveau un")) +
+  
+  # Provinces
+  geom_sf(data = provincebf, fill = NA, color = "green", show.legend = TRUE, 
+          aes(color = "Carte au niveau deux")) +
+  
+  # Communes
+  geom_sf(data = communebf, fill = NA, color = "blue", show.legend = TRUE, 
+          aes(color = "Carte au niveau trois")) +
+  
+  # Ajout d'éléments de carte
+  ggtitle("Carte du Burkina Faso suivant 4 niveaux administratifs") +
+  
+  theme_minimal() +
+  
+  annotation_north_arrow(location = "topright", which_north = "true",  # Flèche du nord 
+                         style = north_arrow_fancy_orienteering) +
+  
+  annotation_scale(location = "bottomright", bar_cols = c("grey60", "white")) +    Echelle
+  
+  scale_fill_manual(
+    name = "Niveaux Administratifs",              # Personnalisation légende
+    values = c("Pays" = "lightblue")
+  ) +
+  scale_color_manual(
+    name = "Niveaux Administratifs",
+    values = c("Régions" = "red", "Provinces" = "green", "Communes" = "blue")
+  )
+
   theme_minimal()
+
+
 
 #On va essayer de modifier l'étendue pour voir
 
