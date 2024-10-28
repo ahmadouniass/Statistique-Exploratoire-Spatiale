@@ -63,10 +63,13 @@ communebf <- st_read(paste0(chemin_acces, "bfa_admbnda_adm3_igb_20200323.shp"))
 # contient la forme de cette entité. Le nombre de géométries est le nombre total d'entités géographiques.
 
 # Calculer et afficher le nombre de géométries par niveau
-print(paste("Nombre de géométries pour le Burkina Faso (niveau pays) :", nrow(burkinafaso)))
-print(paste("Nombre de géométries pour les régions du Burkina Faso :", nrow(regionbf)))
-print(paste("Nombre de géométries pour les provinces du Burkina Faso :", nrow(provincebf)))
-print(paste("Nombre de géométries pour les communes du Burkina Faso :", nrow(communebf)))
+print(paste("Nombre de géométries pour le Burkina Faso (niveau pays) :", nrow(distinct(burkinafaso))  # Modification du code suite a la remarque de Jeanne De la Flèche // Supprimer les doublons en calculant le nombre de lignes
+print(paste("Nombre de géométries pour les régions du Burkina Faso :", nrow(distinct(regionbf))
+print(paste("Nombre de géométries pour les provinces du Burkina Faso :", nrow(distinct(provincebf))
+print(paste("Nombre de géométries pour les communes du Burkina Faso :", nrow(distinct(communebf))
+library(dplyr)
+
+print(paste("Nombre de géométries uniques pour les communes du Burkina Faso :", nb_geom_uniques))
 
 
 # b. Projection et Système de Référence de Coordonnées (CRS)
@@ -254,7 +257,7 @@ ggplot() +
 # Définir une nouvelle étendue
 ggplot() +
   geom_sf(data = burkinafaso) +
-  coord_sf(xlim = c(-3, 3), ylim = c(10, 20)) # Modifier ces valeurs selon ton besoin
+  coord_sf(xlim = c(-3, 3), ylim = c(10, 20)) 
 
 #Réimporter la base pour avoir l'étendue originale
 burkinafaso <- st_read(paste0(chemin_acces, "bfa_admbnda_adm0_igb_20200323.shp"))
