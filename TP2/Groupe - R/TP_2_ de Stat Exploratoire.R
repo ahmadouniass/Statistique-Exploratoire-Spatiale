@@ -227,10 +227,10 @@ library(sp)
 library(leaflet)
 
 # Dossier contenant le raster
-chemin_dossier <- "C:/Users/ALIOUNE KANE/Downloads/Stage ANSD/Statistique Exploratoire et Spatiale/Abson-dev Statistique-Exploratoire-Spatiale main TP2-data_Malaria_Burkina"
+chemin_acces <- "C:/Users/ALIOUNE KANE/Downloads/Stage ANSD/Statistique Exploratoire et Spatiale/Abson-dev Statistique-Exploratoire-Spatiale main TP2-data_Malaria_Burkina"
 
 # Lister tous les fichiers raster dans le dossier avec l'extension .tiff
-fichiers_raster <- list.files(chemin_dossier, pattern = "\\.(tiff)$", full.names = TRUE)
+fichiers_raster <- list.files(chemin_acces, pattern = "\\.(tiff)$", full.names = TRUE)
 
 
 # Charger tous les rasters en tant que stack
