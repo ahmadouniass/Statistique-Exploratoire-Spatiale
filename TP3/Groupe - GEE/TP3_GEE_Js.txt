@@ -6,7 +6,7 @@
 ////                  MEMBRES: ONANENA AMANA JEANNE DE LA FLECHE                     /////
 ////                           DIENG SAMBA                                          /////
 ////                           NDONG TAMSIR                                        /////
-////                           KHADIDIATOU COULIBALY                              /////
+////                           COULIBALY KHADIDIATOU                              /////
 //////////////////////////////////////////////////////////////////////////////////////
 
 /// CONSIGNE: Calcul du taux de malaraa pour chaque niveau.
@@ -148,4 +148,57 @@ var labels = zonalStats1.map(function(feat) {
 // Convertir les labels en ImageCollection et les ajouter sur la carte
 var labels_final = ee.ImageCollection(labels);
 Map.addLayer(labels_final, {}, "Polygon label");
+
+
+// Exporting the tables
+ var zonalStats2 = image.reduceRegions({
+    collection: shapefile2,
+    reducer: ee.Reducer.mean(),
+    scale: 5000
+  });
+  
+  
+ var zonalStats3 = image.reduceRegions({
+    collection: shapefile3,
+    reducer: ee.Reducer.mean(),
+    scale: 5000
+  });
+  
+  
+ var zonalStats0 = image.reduceRegions({
+    collection: shapefile0,
+    reducer: ee.Reducer.mean(),
+    scale: 5000
+  });
+  
+  
+Export.table.toDrive({
+    collection: zonalStats0,
+    description: 'ADM0_Niveau_Indices_Moyens',
+    fileFormat: 'CSV',
+    folder: 'indice_cameroun', 
+    selectors: ['zone', 'mean_value'] })
+
+Export.table.toDrive({
+    collection: zonalStats1,
+    description: 'ADM1_Niveau_Indices_Moyens',
+    fileFormat: 'CSV',
+    folder: 'indice_cameroun', 
+    selectors: ['zone', 'mean_value'] })
+    
+Export.table.toDrive({
+    collection: zonalStats2,
+    description: 'ADM2_Niveau_Indices_Moyens',
+    fileFormat: 'CSV',
+    folder: 'indice_cameroun', 
+    selectors: ['zone', 'mean_value'] })
+
+Export.table.toDrive({
+    collection: zonalStats3,
+    description: 'ADM3_Niveau_Indices_Moyens',
+    fileFormat: 'CSV',
+    folder: 'indice_cameroun', 
+    selectors: ['zone', 'mean_value'] })
+    
+
 
