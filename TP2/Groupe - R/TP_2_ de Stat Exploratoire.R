@@ -44,13 +44,13 @@ library(dplyr)
 library(ggplot2)
 
 # Définir le chemin de base pour éviter la répétition
-chemin_base <- "C:/Users/ALIOUNE KANE/Downloads/ENSAE/ISEP3/Statistiques exploratoire et spatiale/bfa_adm_igb_20200323_shp/"
+chemin_acces <- "C:/Users/ALIOUNE KANE/Downloads/ENSAE/ISEP3/Statistiques exploratoire et spatiale/bfa_adm_igb_20200323_shp/"
 
 # Importer les shapefiles
-burkinafaso <- st_read(paste0(chemin_base, "bfa_admbnda_adm0_igb_20200323.shp"))
-regionbf <- st_read(paste0(chemin_base, "bfa_admbnda_adm1_igb_20200323.shp"))
-provincebf <- st_read(paste0(chemin_base, "bfa_admbnda_adm2_igb_20200323.shp"))
-communebf <- st_read(paste0(chemin_base, "bfa_admbnda_adm3_igb_20200323.shp"))
+burkinafaso <- st_read(paste0(chemin_acces, "bfa_admbnda_adm0_igb_20200323.shp"))
+regionbf <- st_read(paste0(chemin_acces, "bfa_admbnda_adm1_igb_20200323.shp"))
+provincebf <- st_read(paste0(chemin_acces, "bfa_admbnda_adm2_igb_20200323.shp"))
+communebf <- st_read(paste0(chemin_acces, "bfa_admbnda_adm3_igb_20200323.shp"))
 
 
 # 2. Calculs de statistiques
@@ -134,9 +134,6 @@ print(centroides_communebf)
 
 # e. Calcul de l'aire et du périmètre
 
-# e. Calcul de l'aire et du périmètre
-
-
 # Calculer et organiser les résultats pour chaque région, province, et commune avec Aire et Périmètre
 # Vérifier et caster le type de géométrie si nécessaire
 if (!all(st_geometry_type(regionbf) == "MULTIPOLYGON")) {
@@ -219,7 +216,7 @@ ggplot() +
   coord_sf(xlim = c(-3, 3), ylim = c(10, 20)) # Modifier ces valeurs selon ton besoin
 
 #Réimporter la base pour avoir l'étendue originale
-burkinafaso <- st_read(paste0(chemin_base, "bfa_admbnda_adm0_igb_20200323.shp"))
+burkinafaso <- st_read(paste0(chemin_acces, "bfa_admbnda_adm0_igb_20200323.shp"))
 
 #Section 2 : Données raster
 
