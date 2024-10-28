@@ -29,5 +29,6 @@ This course material is licensed under a Creative Commons Attribution 4.0 Intern
 
 - Gandhi, Ujaval, 2023. Advanced Concepts in Google Earth Engine course. Spatial Thoughts. https://courses.spatialthoughts.com/gee-advanced.html
 - Gandhi, Ujaval, 2021. End-to-End Google Earth Engine Course. Spatial Thoughts. https://courses.spatialthoughts.com/end-to-end-gee.html
+- Gandhi, Ujaval, 2023. Creating Publication Quality Charts with GEE Course. Spatial Thoughts. https://courses.spatialthoughts.com/gee-charts.html
 
  
