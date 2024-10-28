@@ -1,0 +1,160 @@
+///////////////////////////////////////////////////////////////////////////////////////////////
+////      ECOLE NATIONALE DE LA STATISTIQUE ET DE L'ANALYSE ECONOMIQUE PIERRE NDIAYE     /////
+////          COURS DE STATISTIQUES EXPLORATOIRE ET SPATIALE - ISE1_CYCLE LONG          /////
+////                           ENSEIGNANT: MR HEMA                                     /////
+////                   TP4_GOOGLE EARTH ENGINE AVEC JAVASCRIPT                        /////
+////                  MEMBRES: ONANENA AMANA JEANNE DE LA FLECHE                     /////
+////                           DIENG SAMBA                                          /////
+////                           NDONG TAMSIR                                        /////
+////                           COULIBALY  KHADIDIATOU                             /////
+//////////////////////////////////////////////////////////////////////////////////////
+
+/// CONSIGNE: Calcul du taux de malaraa pour chaque niveau.
+
+
+
+///////////////////////////////////////////Let's start////////////////////////////////////////////////
+
+/// IMPORTATION DES FICHIERS 
+var ecart_type = ee.Image("projects/ee-coulibalykhadidiatou-tp4/assets/ecart_type"),
+    moyenne = réimage("projects/ee-coulibalykhadidiatou-tp4/assets/moyenne"),
+    raster2022 = ee.Image("projects/ee-coulibalykhadidiatou-tp4/assets/malariaCMR2022"),
+    raster2021 = ee.Image("projects/ee-coulibalykhadidiatou-tp4/assets/malariaCMR2021"),
+    raster2020 = ee.Image("projects/ee-coulibalykhadidiatou-tp4/assets/malariaCMR2020"),
+    AOI_CMR = ee.FeatureCollection("projects/ee-coulibalykhadidiatou-tp4/assets/Adm0_AOI_CMR");
+
+
+// Let's clip on our area of interest
+ecart_type= ecart_type.clip(AOI_CMR);
+moyenne = moyenne.clip(AOI_CMR);
+
+// We take the first band, by the way
+raster2022=raster2022.clip(AOI_CMR).select([0]);
+raster2021=raster2021.clip(AOI_CMR).select([0]);
+raster2020=raster2020.clip(AOI_CMR).select([0]);
+
+
+// Création des images "bornes" de classification de l'indicateur
+var bornInf = moyenne.add(ecart_type);
+var bornSup = moyenne.add(ecart_type.multiply(2));
+
+
+////////////////////// Méthode 1 : Pas à pas, avec une fonction
+
+var IndicatorRaster1=function(Image, LBoundR, UBoundR){
+
+  // Image pour les valeurs inférieures
+  var ImgInf = Image.lt(LBoundR);
+  
+  /*Image pour les valeurs supérieures ou égales à bornSup 
+  et attribution de la valeur 3 */
+  var ImgSup = Image.gte(UBoundR).multiply(3);
+  
+  // On réunit les 2 images et on transforme les valeurs 0 en 2
+  var ResultImg = ImgInf.add(ImgSup);
+  
+  //On remplace les 0 par 2.
+  ResultImg = ResultImg.where(ResultImg.eq(0), 2);
+  
+  return ResultImg ;
+  
+};
+
+
+
+// Ou encore 
+var IndicatorRaster2= function(Image, LBoundR, UBoundR){
+    var ResultImg = Image.lt(LBoundR)
+                       .add(Image.gte(UBoundR).multiply(3));
+                       
+  ResultImg= ResultImg.where(ResultImg.eq(0), 2)                  
+    return ResultImg  ; 
+  
+};
+
+
+///////////////// Methode 2 :avec une expression conditionnelle
+// # Si imbriqués...
+
+var IndicatorRaster3 = function(image, LBoundR, UBoundR, clipping){
+  
+ var ResultImg = ee.Image().expression(
+  "(image < LBoundR) ? 1 : (image >= UBoundR) ? 3 : 2",
+  {
+    'image': image.select([0]),
+    'LBoundR': LBoundR.select([0]),
+    'UBoundR': UBoundR.select([0])
+  }
+);
+ // On retourne en faisant un clip
+  return ResultImg.clip(clipping) ;
+
+};
+
+
+////////////////// Utilisation de la fonction //////////////////////////////
+
+
+// Création d'une palette de couleurs
+var bins = {
+  min: 1,
+  max: 3,
+  palette: ['green','yellow', 'red']
+};
+
+// Fonction 1
+var Indic2020_1= IndicatorRaster1(raster2020, bornInf, bornSup);
+var Indic2021_1= IndicatorRaster1(raster2021, bornInf, bornSup);
+var Indic2022_1= IndicatorRaster1(raster2022, bornInf, bornSup);
+
+// Fonction 3
+var Indic2020_3= IndicatorRaster3(raster2020, bornInf, bornSup, AOI_CMR);
+var Indic2021_3= IndicatorRaster3(raster2021, bornInf, bornSup, AOI_CMR);
+var Indic2022_3= IndicatorRaster3(raster2022, bornInf, bornSup, AOI_CMR);
+
+
+// Affichage
+Map.addLayer(Indic2020_1, bins, 'Situation 2020 - 1');
+Map.addLayer(Indic2021_1, bins, 'situation 2021 - 1');
+Map.addLayer(Indic2022_1,bins, 'situation 2022 - 1');
+
+Map.addLayer(Indic2020_3, bins, 'Situation 2020 - 3');
+Map.addLayer(Indic2021_3, bins, 'situation 2021 - 3');
+Map.addLayer(Indic2022_3,bins, 'situation 2022 - 3');
+
+
+// Exporting the images
+
+// Exporter l'image vers Google Drive
+Export.image.toDrive({
+  image: Indic2020_1,
+  description: 'Indic2020_1',
+  folder: 'ee_images',
+  region: Indic2020_1.geometry(),
+  scale: 5000,
+});
+
+// Exporter l'image vers Google Drive
+Export.image.toDrive({
+  image: Indic2021_1,
+  description: 'Indic2020_2',
+  folder: 'ee_images',
+  region: Indic2021_1.geometry(),
+  scale: 5000,
+});
+
+// Exporter l'image vers Google Drive
+Export.image.toDrive({
+  image: Indic2022_1,
+  description: 'Indic2020_3',
+  folder: 'ee_images',
+  region: Indic2022_1.geometry(),
+  scale: 5000,
+});
+
+
+//////////////////////////////////////////////////////////////////////////////
+
+
+
+//-------------------------------------------END OF SCRIPT----------------------------//
