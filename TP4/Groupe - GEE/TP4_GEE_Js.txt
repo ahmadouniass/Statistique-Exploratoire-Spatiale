@@ -9,9 +9,11 @@
 ////                           COULIBALY  KHADIDIATOU                             /////
 //////////////////////////////////////////////////////////////////////////////////////
 
-/// CONSIGNE: Calcul du taux de malaraa pour chaque niveau.
-
-
+/// CONSIGNE: Création d'une image ayant 3 couleurs suivant les valeurs contenues dans chaque pixel.
+///          Il s'agit de caractériser la situation des différentes zones suivant le taux de malaria.
+                                    // Vert : Aucune crise
+                                    // Jaune : Situation modérée
+                                    // Rouge : Situation grave (crise)
 
 ///////////////////////////////////////////Let's start////////////////////////////////////////////////
 
@@ -62,7 +64,7 @@ var IndicatorRaster1=function(Image, LBoundR, UBoundR){
 
 
 
-// Ou encore 
+// Ou encore : c'est la même fonction, plus en plus court...
 var IndicatorRaster2= function(Image, LBoundR, UBoundR){
     var ResultImg = Image.lt(LBoundR)
                        .add(Image.gte(UBoundR).multiply(3));
@@ -92,7 +94,7 @@ var IndicatorRaster3 = function(image, LBoundR, UBoundR, clipping){
 };
 
 
-////////////////// Utilisation de la fonction //////////////////////////////
+////////////////// Utilisation des fonctions //////////////////////////////
 
 
 // Création d'une palette de couleurs
@@ -152,9 +154,6 @@ Export.image.toDrive({
   scale: 5000,
 });
 
-
 //////////////////////////////////////////////////////////////////////////////
-
-
 
 //-------------------------------------------END OF SCRIPT----------------------------//
