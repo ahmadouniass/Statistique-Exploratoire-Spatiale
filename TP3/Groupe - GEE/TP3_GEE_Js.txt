@@ -6,7 +6,7 @@
 ////                  MEMBRES: ONANENA AMANA JEANNE DE LA FLECHE                     /////
 ////                           DIENG SAMBA                                          /////
 ////                           NDONG TAMSIR                                        /////
-////                           KHADIDIATOU COULIBALY                              /////
+////                           COULIBALY KHADIDIATOU                              /////
 //////////////////////////////////////////////////////////////////////////////////////
 
 /// CONSIGNE: Calcul du taux de malaraa pour chaque niveau.
@@ -39,7 +39,7 @@ print('Image scale (resolution en metres):', scale);
 
 // Fonction pour calculer les statistiques zonales
 
-function getZonalList(shapefile, raster, regionField) {
+function getZonalList(shapefile, raster, regionField, export_name) {
   // Calcul des statistiques par région
   var zonalStats = raster.reduceRegions({
     collection: shapefile,
@@ -49,8 +49,8 @@ function getZonalList(shapefile, raster, regionField) {
 
   // Préparer les statistiques zonales
   var zonalStatistics = zonalStats.map(function(feature) {
-    var zoneName = feature.get(regionField); // Nom de la zone
-    var meanValue = feature.get('mean'); // Valeur moyenne obtenue
+  var zoneName = feature.get(regionField); // Nom de la zone
+  var meanValue = feature.get('mean'); // Valeur moyenne obtenue
     
 
     return ee.Feature(null, {
@@ -58,27 +58,34 @@ function getZonalList(shapefile, raster, regionField) {
       'mean_value': meanValue,
     });
   });
-
+  
+  Export.table.toDrive({
+    collection: zonalStatistics,
+    description: export_name,
+    fileFormat: 'CSV',
+    folder: 'indice_cameroun', 
+    selectors: ['zone', 'mean_value']})
+  
   // Réduire les colonnes pour obtenir la liste des valeurs
   var zonalList = zonalStatistics.reduceColumns(ee.Reducer.toList(2), ['zone', 'mean_value']);
   
   // Retourner zonalList
   return zonalList;
+  
 }
 
 
-
 // Exemple d'utilisation
-var zonalList0 = getZonalList(shapefile0, image, 'ADM0_FR');
+var zonalList0 = getZonalList(shapefile0, image, 'ADM0_FR', 'shapefile0_means');
 print('Valeurs obtenues', zonalList0);
 
-var zonalList1 = getZonalList(shapefile1, image, 'ADM1_FR');
+var zonalList1 = getZonalList(shapefile1, image, 'ADM1_FR', 'shapefile1_means');
 print('Valeurs obtenues', zonalList1);
 
-var zonalList2 = getZonalList(shapefile2, image, 'ADM1_FR');
+var zonalList2 = getZonalList(shapefile2, image, 'ADM1_FR', 'shapefile2_means');
 print('Valeurs obtenues', zonalList2);
 
-var zonalList3 = getZonalList(shapefile3, image, 'ADM2_FR');
+var zonalList3 = getZonalList(shapefile3, image, 'ADM2_FR', 'shapefile3_means');
 print('Valeurs obtenues', zonalList3);
 
 
@@ -119,8 +126,6 @@ function normalizeString(str) {
         .replace('ü', 'u')
         .replace('ç', 'c');
 }
-
-
 
   
 // Mapper les étiquettes sur chaque polygone
