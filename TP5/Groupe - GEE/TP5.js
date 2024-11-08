@@ -18,22 +18,22 @@
  * - Calcul du nombre d'enfants atteints de Malaria par admin
  * - Calcul du taux de Malaria par admin
  * 
- * **************************************************/
+ ****************************************************/
 
 /*****************************************************
  * Etape1 : Importation des fichiers 
 *****************************************************/
 
 // 1- Importation des différents admin (0-3)
-var AD0_SN = ee.FeatureCollection("projects/ee-papaamadouniang2004/assets/sen_admbnda_adm0_anat_20240520");
-var AD1_SN = ee.FeatureCollection("projects/ee-papaamadouniang2004/assets/sen_admbnda_adm1_anat_20240520");
-var AD2_SN = ee.FeatureCollection("projects/ee-papaamadouniang2004/assets/sen_admbnda_adm2_anat_20240520");
-var AD3_SN = ee.FeatureCollection("projects/ee-papaamadouniang2004/assets/sen_admbnda_adm3_anat_20240520");
+var AD0_SN = ee.FeatureCollection("projects/ee-papaamadouniang2004/assets/sen_admbnda_adm0_anat_20240520"); // Pays
+var AD1_SN = ee.FeatureCollection("projects/ee-papaamadouniang2004/assets/sen_admbnda_adm1_anat_20240520"); // Régions
+var AD2_SN = ee.FeatureCollection("projects/ee-papaamadouniang2004/assets/sen_admbnda_adm2_anat_20240520"); // Départements
+var AD3_SN = ee.FeatureCollection("projects/ee-papaamadouniang2004/assets/sen_admbnda_adm3_anat_20240520"); // Communes
 
 // 2- Importation de l'image WorldPop pour le Sénégal
 var population = ee.Image('projects/ee-papaamadouniang2004/assets/SEN_population_v1_0_gridded').clip(AD0_SN);
 
-// 3- Iùportation des rasters moyennes et écart type
+// 3- Importation des rasters moyennes et écart type
 var ras_moy = ee.Image('projects/ee-papaamadouniang2004/assets/moyenne_sen').select([0]).clip(AD0_SN);
 var ras_ect = ee.Image('projects/ee-papaamadouniang2004/assets/ecart_type_sen').select([0]).clip(AD0_SN);
 
@@ -41,7 +41,7 @@ var ras_ect = ee.Image('projects/ee-papaamadouniang2004/assets/ecart_type_sen').
 var ras_cible = ee.Image('projects/ee-papaamadouniang2004/assets/202406_Global_Pf_Parasite_Rate_SEN_2022').select([0]).clip(AD0_SN);
 
 // 5- Centrer la carte sur la zone concernée
-Map.centerObject(population, 10);
+Map.centerObject(population, 7);
 
 /*****************************************************
  * Etape2 : Visualisation du raster Worldpop Sénégal 
@@ -84,10 +84,10 @@ function calcandexport(admin, description, raster) {
 }
 
 // Application de la fonction au différents admins (0-3)
-calcandexport(AD0_SN, "Pays", population);
-calcandexport(AD1_SN, "Region", population);
-calcandexport(AD2_SN, "Departement", population);
-calcandexport(AD3_SN, "Commune", population);
+calcandexport(AD0_SN, "Pays", population); // Pays
+calcandexport(AD1_SN, "Region", population); // Régions
+calcandexport(AD2_SN, "Departement", population); // Départements
+calcandexport(AD3_SN, "Commune", population); // Communes
 
 /*****************************************************
  * Etape4 : Ramener le raster population à 5km
@@ -177,12 +177,9 @@ function calcetexportpop(admin, description, raster) {
   // Exporter vers Google Drive
   Export.table.toDrive({
     collection: popparadmin,
-    description: 'Population_Malade_Par' + description,
+    description: 'Population_Malade_Par_' + description,
     fileFormat: 'CSV'
   });
-  
-  
-print(popparadmin)
   
   // Retourner le résultat
   return popparadmin;
@@ -207,57 +204,49 @@ var nbgossmalcom = calcetexportpop(AD3_SN, "Commune", malaria_pop);
  * Etape9 : Calcul du taux de Malaria par admin
 *****************************************************/
 
-// Calcul du nombre d'enfants par admin
-var nbgossparpays = calcandexport(AD0_SN, "Pays", population_0_1);
-var nbgossparreg = calcandexport(AD1_SN, "Regions", population_0_1);
-var nbgosspardep = calcandexport(AD2_SN, "Departements", population_0_1);
-var nbgossparcom = calcandexport(AD3_SN, "Communes", population_0_1);
+// Combiner les deux bandes en une seule image
+var malaria_pop_no = malaria_pop.addBands(population_0_1);
 
-/*/ Calcul du taux (%) de malaria dans le pays et exporter cela au drive 
-var taux_pays = nbgossmalpays.divide(nbgossparpays).multiply(100);
-// Exporter vers Google Drive
-Export.table.toDrive({
-  collection: taux_pays,
-  description: 'Taux de malaria par pays',
-  fileFormat: 'CSV'
-});
+// Initialisation de la fonction pour automatiser le processus
+function calcul_taux(admin, description) {
+  
+  // Réduire les valeurs du raster par unité administrative en utilisant la somme
+  var sommeparadmin = malaria_pop_no.reduceRegions({
+    collection: admin,
+    reducer: ee.Reducer.sum(),
+    scale: 5000,
+  });
 
-// Calcul du taux (%) de malaria par régions et exporter cela au drive
-var taux_regions = nbgossparreg.divide(nbgossmalreg).multiply(100);
-// Exporter vers Google Drive
-Export.table.toDrive({
-  collection: taux_regions,
-  description: 'Taux de malaria par regions',
-  fileFormat: 'CSV'
-});
+  // Calculer le taux de malaria
+  var taux_mal = sommeparadmin.map(function(feature){
+  
+    // Récupération de la variable pour les malades
+    var malaria = ee.Number(feature.get('b1'));
+  
+    // Récupération de la variable population
+    var population = ee.Number(feature.get('b1_1'));
+  
+    // Calculer le taux
+    var taux = malaria.divide(population).multiply(100);
+  
+    return feature.set('taux_malaria', taux);
+  });
 
-// Calcul du taux (%) de malaria par départements et exporter cela au drive
-var taux_departements = nbgosspardep.divide(nbgossmaldep).multiply(100);
-// Exporter vers Google Drive
-Export.table.toDrive({
-  collection: taux_departements,
-  description: 'Taux de malaria par departements',
-  fileFormat: 'CSV'
-});
+  // Afficher les résultats au niveau de la console
+  print('Taux de paludisme par ' + description, taux_mal);
+}
 
-// Calcul du taux (%) de malaria par communes et exporter cela au drive
-var taux_communes = nbgossparcom.divide(nbgossmalcom).multiply(100);
-// Exporter vers Google Drive
-Export.table.toDrive({
-  collection: taux_communes,
-  description: 'Taux de malaria par communes',
-  fileFormat: 'CSV'
-});
-*/
+// Application de la fonction pour le niveau pays
+calcul_taux(AD0_SN, 'Pays');
 
-// 1. Définir une jointure interne basée sur 'region_id'
-var join = ee.Join.inner();
+// Application de la fonction pour le niveau région
+calcul_taux(AD1_SN, 'Region');
 
-// 2. Créer un filtre pour joindre les régions ayant le même 'region_id'
-var filter = ee.Filter.equals({
-  leftField: 'ADM0_FR',
-  rightField: 'ADM0_FR'
-});
+// Application de la fonction pour le niveau département 
+calcul_taux(AD2_SN, 'Departement');
+
+// Application de la fonction pour le niveau commune
+calcul_taux(AD3_SN, 'Commune');
 
 /*****************************************************
  *******************Fin du script*********************
