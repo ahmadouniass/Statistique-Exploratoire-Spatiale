@@ -201,3 +201,6 @@ leaflet() %>%
             title = "Nombre d'événement") %>%
   addResetMapButton() %>%  # Recentrer la carte
   addFullscreenControl()  #ajout du basculement en mode plein écran
+
+
+///////////////////////////////////////////////END OF SCRIPT /////////////////////////////////////////////////////////
