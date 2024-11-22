@@ -164,12 +164,17 @@ sum(t1$nb_events)
 sum(t2$nb_events)
 sum(t3$nb_events)
 
-#3.Création de rasters autours des attaques---------------------------------------------------------------------------------------------
+# 3. Création de rasters autour des attaques----------------------------------------------------------------------------
+
+#On crée des fonctions d'abord
+
 
 # Reprojeter pour obtenir des unités en mètres
-AOI_prj <- st_transform(AOI_event, crs = 32629)  # EPSG 32629 pour UTM zone 29N -- pour le Mali
-
-# Définir l'étendue (extent) et la résolution en mètres
+Create_raster <- function(datafile, filename ="Rasterisation.tif") {
+        # Reprojeter pour obtenir des unités en mètres
+    AOI_prj <- st_transform(datafile, crs = 32629)  # EPSG 32629 pour UTM zone 29N -- pour le Mali
+    
+    # Définir l'étendue (extent) et la résolution en mètres
 ext <- raster::extent(sf::st_bbox(AOI_prj)) #extent
 res <- 5000  # Résolution de 5 km
 rast_crs <- CRS("+proj=utm +zone=29 +datum=WGS84 +units=m +no_defs")
@@ -177,27 +182,95 @@ rast_crs <- CRS("+proj=utm +zone=29 +datum=WGS84 +units=m +no_defs")
 raster_template <- raster::raster(ext=ext, resolution=res, crs=rast_crs)
 
 # Evènements...
-AOI_Raster <- raster::rasterize(AOI_prj,raster_template,field=1, fun= sum)
+Raster <- raster::rasterize(AOI_prj,raster_template,field=1, fun= sum)
 
 #Save with GTIFF format
-raster::writeRaster(AOI_Raster, filename = "Rasterisation.tif", format = "GTiff", overwrite = TRUE)
+raster::writeRaster(Raster, filename = filename, format = "GTiff", overwrite = TRUE)
+
+return(Raster)
+
+}
 
 
-## Palette de couleurs
-pal <- colorNumeric(palette = viridis(1000, option = "viridis"), 
-                    domain = raster::values(AOI_Raster),
-                    na.color = "transparent")
 
 
-# Créer une carte interactive
-leaflet() %>%
-  addTiles() %>%  # Couche de base (OpenStreetMap)
+
+AOI_Raster <- Create_raster(AOI_event, "Rasterisation_general.tif")
+
+
+
+
+
+## Fonction pour affciher une carte
+Create_map <- function(raster){
+  ## Palette de couleurs
+  pal <- colorNumeric(palette = viridis(1000, option = "viridis"), 
+                      domain = raster::values(raster),
+                      na.color = "transparent")
   
-  addPolygons(data = shp, color = "brown", weight = 2, opacity = 0.2, fillOpacity = 0.1,
-              popup = ~ADM1_FR) %>%  
+  # Créer une carte interactive
+  leaflet() %>%
+    addTiles() %>%  # Couche de base (OpenStreetMap)
+    
+    addPolygons(data = shp, color = "brown", weight = 2, opacity = 0.2, fillOpacity = 0.1,
+                popup = ~ADM1_FR) %>%  
+    
+    addRasterImage(raster, opacity = 2,colors= pal) %>%
+    addLegend(pal = pal, values = raster::values(raster),
+              title = "Nombre d'événement") %>%
+    addResetMapButton() %>%  # Recentrer la carte
+    addFullscreenControl()  #ajout du basculement en mode plein écran  
+}
+
+
+
+Create_map(AOI_Raster)
+
+
+summary(raster::values(AOI_Raster)) 
+
+
+# 4. Création de raster pour chaque année et visualistion du nombre d'attaques par année
+
+for( i in unique(data$year)){
   
-  addRasterImage(AOI_Raster, opacity = 2,colors= pal) %>%
-  addLegend(pal = pal, values = raster::values(AOI_Raster),
-            title = "Nombre d'événement") %>%
-  addResetMapButton() %>%  # Recentrer la carte
-  addFullscreenControl()  #ajout du basculement en mode plein écran
+  assign(paste0("data_", i), data[data$year == i,])
+  assign(paste0("AOI_Raster_", i), Create_raster(AOI_event,  paste0("Rasterisation_", i, ".tif")))
+  
+}
+
+
+head(data_2020, 2)
+
+Create_map(AOI_Raster_2020)
+
+
+#Créons des tableaux contenant les données à visualiser
+
+
+t <- data %>% 
+  group_by(year, event_type) %>%
+  summarise(attacks_number =n())
+
+
+t1 <- data %>% 
+  group_by(year) %>%
+  summarise(attacks_number =n())
+
+
+head(t,3)
+
+
+ggplot(t1, aes(y= attacks_number, x=year))+
+  geom_path(linewidth= 1.2, color="blue")+
+  geom_point(size=2, color="red")+
+  theme_minimal() +
+  labs(title = "Nombre d'attaques par année") 
+
+
+ggplot(t, aes(y= attacks_number, x=year, color = event_type, group=event_type))+
+  geom_path(linewidth= 1.2)+
+  geom_point(size=2)+
+  theme_minimal() +
+  labs(title = "Nombre d'attaques par année") 
+
