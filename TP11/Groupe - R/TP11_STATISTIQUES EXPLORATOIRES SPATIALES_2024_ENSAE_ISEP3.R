@@ -12,7 +12,7 @@
 
 #                   =====================  CONSIGNE  =====================
 # 1. Faire au préalable tout ce qui a été fait au TP6
-# 2. Binariser le raster des évènements que telle sorte que les pixels ayant plus de 5 evenements prennent la valeur 0 et dans le cas contraire, c'est la valeur 0 qui est affectée 
+# 2. Binariser le raster des évènements de telle sorte que les pixels ayant plus de 5 evenements prennent la valeur 1 et dans le cas contraire, c'est la valeur 0 qui est affectée 
 # 3. Pour le raster population, amener la réoslution qui e=était de 100m à 5km par agrégation 
 # 4. Calculer le confliction Diffusion Indicator, au niveau pays et au niveau région, en procédent comme suit 
 #     a- Binariser le raster population de 5km, qui prend ainsi la valeur 1 si le nombre d'habitants est supérieur à 50 et 0 sinon
