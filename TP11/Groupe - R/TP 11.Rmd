@@ -21,8 +21,8 @@ output:
 
 1. **Faire au préalable tout ce qui a été fait au TP6**
 2. **Binariser le raster des évènements de telle sorte que les pixels ayant plus de 5 evenements prennent la valeur 1 et dans le cas contraire, c'est la valeur 0 qui est affectée**
-3. **Pour le raster population, amener la réoslution qui e=était de 100m à 5km par agrégation** 
-4. **Calculer le confliction Diffusion Indicator, au niveau pays et au niveau région, en procédent comme suit**
+3. **Pour le raster population, amener la résolution qui était de 100m à 5km par agrégation** 
+4. **Calculer le confliction Diffusion Indicator, au niveau pays et au niveau région, en procédent comme suit:**
   a- **Binariser le raster population de 5km, qui prend ainsi la valeur 1 si le nombre d'habitants est supérieur à 50 et 0 sinon**
   b- **Multiplier les deux raster binarisés** 
   c- **Compter le nombre de 1 dans le raster binarisé de 5km de la population**
@@ -427,7 +427,7 @@ head(comparaison, 20)
 D'après cet échantillon, on voit que ca a bien fait la binarisation
 
 
-## 2- Binarisons le raster population: moins de 50 hbts à 1 sinon 0
+## 2- Binarisons le raster population: plus de 50 hbts à 1 sinon 0
 
 ### Importer le raster de population
 
@@ -498,7 +498,7 @@ pop_resampled <- resample(pop_5km_utm, AOI_Raster_binaire, method = "ngb")
 
 ```{r}
 pop_resampled_binary <- calc(pop_resampled, fun = function(x) {
-  ifelse(x < 50, 1, 0)
+  ifelse(x < 50, 0, 1)
 })
 ```
 
@@ -597,7 +597,7 @@ print(pop_count)
 prod_count <- extract(mult_raster, shp_pays, fun = sum, na.rm = TRUE)
 print(prod_count)
 CDI <- prod_count / pop_count
-data.frame(Admin = shp_pays$ADM0_FR, CDI = CDI) ## 0.007487653
+data.frame(Admin = shp_pays$ADM0_FR, CDI = CDI)
 ```
 
 ### AU NIVEAU DU DEPARTEMENT
