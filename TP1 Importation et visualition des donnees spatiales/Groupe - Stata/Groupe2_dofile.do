@@ -10,7 +10,7 @@ ssc install spmap
 ssc install shp2dta
 
 // Conversion du fichier shapefile en format Stata (level 0)
-shp2dta using "D:\Statistique exploratoire spatiale\Cours2\Statistique-Exploratoire-Spatiale\TP1 Importation et visualition des donnees spatiales\data\Shapefiles\RCI\civ_admbnda_adm0_cntig_20180706_em", database(civdb) coordinates(civcoord) genid(id)
+shp2dta using "C:\Users\HP\Desktop\MonBureau\AF ISE 1 CL\Statistique exploratoire spatiale\COURS\Statistique-Exploratoire-Spatiale\TP1 Importation et visualition des donnees spatiales\data\Shapefiles\RCI\civ_admbnda_adm1_cntig_ocha_itos_20180706_em", database(civdb) coordinates(civcoord) genid(id)
 
 // Chargement des données
 use civdb, clear
@@ -29,7 +29,7 @@ spmap using civcoord, id(id) ///
 
 // Conversion du fichier shapefile en format Stata (level 1)
 
-shp2dta using "D:\Statistique exploratoire spatiale\Cours2\Statistique-Exploratoire-Spatiale\TP1 Importation et visualition des donnees spatiales\data\Shapefiles\RCI\civ_admbnda_adm1_cntig_ocha_itos_20180706_em", database(civdb1) coordinates(civcoord1) genid(id)
+shp2dta using "C:\Users\HP\Desktop\MonBureau\AF ISE 1 CL\Statistique exploratoire spatiale\COURS\Statistique-Exploratoire-Spatiale\TP1 Importation et visualition des donnees spatiales\data\Shapefiles\RCI\civ_admbnda_adm1_cntig_ocha_itos_20180706_em", database(civdb1) coordinates(civcoord1) genid(id)
 
 // Chargement des données
 use civdb1, clear

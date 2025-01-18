@@ -1,3 +1,48 @@
+///////////////////////////////////////////////////////////////////////////////////////////////
+////      ECOLE NATIONALE DE LA STATISTIQUE ET DE L'ANALYSE ECONOMIQUE PIERRE NDIAYE     /////
+////          COURS DE STATISTIQUES EXPLORATOIRE ET SPATIALE - ISE1_CYCLE LONG          /////
+////                           ENSEIGNANT: MR HEMA                                     /////
+////                   TP1_GOOGLE EARTH ENGINE AVEC JAVASCRIPT 
+////                   PAYS : SENEGAL
+////                  MEMBRES: FOGWOUNG DJOUFACK SARAH-LAURE                         /////
+////                           NGUEMFOUO NGOUMTSA CELINA                            /////
+////                           NIASS AHMADOU                                       /////
+////                           SENE MALICK                                        /////
+//////////////////////////////////////////////////////////////////////////////////////
+
+//                          ============== CONSIGNE =================
+
+// PART 1 
+//  1.	Importer les données au niveau des différents logiciels
+//  2.	Améliorer la visualisation
+// PART 2 
+//  3. Afficher la projection, la taille des pixels, le nombre total de pixels, étendue, superficie et périmètre
+
+//                          ========== LET'S DIVE RIGHT IN ===============
+
+          // 1- Importation :  Pour importer des données (shapefiles ou raster), il faut d'abord les télécharger dans l'onglet Assets de l'interface GEE, puis utiliser l'ID généré pour les intégrer dans le script.
+
+// Les formats acceptés pour les shapefiles sont .shp, .zip, .dbf, .prj, .shx, .cpg, .sbn, .shpxml, .qix
+// Les rasters quant à eux doivent être d'extension .tif
+
+var Sn0 = ee.FeatureCollection("projects/ee-fogwoungsarahlauretp2/assets/TP1_StatistiqueExploratoireSpatiale_ENSAE2024_ISEP3/SENEGAL_NiveauPays"); // Pays
+var regions = ee.FeatureCollection("projects/ee-fogwoungsarahlauretp2/assets/TP1_StatistiqueExploratoireSpatiale_ENSAE2024_ISEP3/SENEGAL_NiveauRegion"); // Régions
+var departements = ee.FeatureCollection("projects/ee-fogwoungsarahlauretp2/assets/TP1_StatistiqueExploratoireSpatiale_ENSAE2024_ISEP3/SENEGAL_NiveauDepartement"); // Départements
+var communes = ee.FeatureCollection("projects/ee-fogwoungsarahlauretp2/assets/TP1_StatistiqueExploratoireSpatiale_ENSAE2024_ISEP3/SENEGAL_NiveauCommune"); // Communes
+var raster1 = ee.Image("projects/ee-fogwoungsarahlauretp2/assets/TP1_StatistiqueExploratoireSpatiale_ENSAE2024_ISEP3/202001_Global_Motorized_Travel_Time_to_Healthcare_SEN");
+var raster2 = ee.Image("projects/ee-fogwoungsarahlauretp2/assets/TP1_StatistiqueExploratoireSpatiale_ENSAE2024_ISEP3/202001_Global_Walking_Only_Travel_Time_To_Healthcare_SEN_");
+var raster3 = ee.Image("projects/ee-fogwoungsarahlauretp2/assets/TP1_StatistiqueExploratoireSpatiale_ENSAE2024_ISEP3/201501_Global_Travel_Time_to_Cities_SEN");
+
+// Le Sénégal (niveau 0, Sn0) est divisé en 14 régions (niveau 1, regions), 
+// qui comprennent 46 départements (niveau 2, departements), 
+// eux-mêmes subdivisés en 125 communes (niveau 3, communes).
+
+        // 2- Visualisation : La visualisation dans Google Earth Engine permet d'afficher des couches vectorielles et raster sur une carte interactive.
+
+// Ici, nous definirons des couleurs, largeur de contours au préalable
+// Puis nous allons ajouter les couche à la carte à l'aide de Map.addLayer()
+// Puis nous centrons la carte sur les objets ajoutés à l'aide de Map.centerObject()
+ 
 // Variables pour définir les couleurs et contours
 var visParamsn0 = {
   color: 'red',  // Couleur des contours
@@ -43,78 +88,117 @@ Map.addLayer(raster2, {}, 'Global Walking Only Travel Time To Healthcare');
 
 // Ajouter le raster3 à la carte 
 Map.addLayer(raster3, {}, 'Global Travel Time to Cities');
+   
+   // STEP FORWARD: Inspirons nous des codes du groupe 3 pour pouvoir ajouter les labels à la carte
+// Nous allons utiliser le niveau 1 (Regions) et le raster 'Global Motorized Travel Time to Healthcare' qui renseigne sur le temps de trajet motorisé nécessaire pour atteindre les établissements de santé 
+// Et donc pour chaque région 
 
-// DEUXIEME PARTIE DU DEVOIR 
-// Pour afficher la projection: manière dont les  données géographiques sont transformées en coordonnées plates sur une carte (par exemple, WGS84, UTM, etc.). La projection  est essentielle pour que les distances et les emplacements surla carte soient précis.
-// Pour un raster en général c'est ESPG: 4326
-var projection_raster = image.projection();
-print('Projection du raster est :', projection_raster);
-// Pour un shapefile
-var projection_vecteur = image.projection();
-print('Projection du vecteur est :', projection_vecteur);
+// Charger le package 'text' qui permet d'ajouter du texte sur la carte
+var text = require('users/gena/packages:text');
+
+// Définir l'échelle pour les étiquettes
+var scale = Map.getScale() * 1;
+
+// On calcule ici, pour chacune des régions, le temps moyen de trajet motorisé nécessaire pour atteindre les établissements de santé 
+var zonalStats1 = raster1.reduceRegions({
+    collection: regions,
+    reducer: ee.Reducer.mean(),
+    scale: 5000
+  });
+  
+// Fonction pour remplacer les caractères accentués (Sinon les régions de Kédougou, séghiou et Thiès auront des problemes pour l'affichage)
+// On remplace donc la version accentuée par la version sans accent
+function normalizeString(str) {
+    return ee.String(str)
+        .replace('é', 'e') // Remplacement de 'é' par 'e'
+        .replace('è', 'e');// Remplacement de 'é' par 'e'
+}
+
+// Création des étiquettes pour chaque région et en ajoutant le temps moyen précédemment calculé
+var labels = zonalStats1.map(function(feat) {
+     feat = ee.Feature(feat);
+var zoneName = ee.String(feat.get("ADM1_FR")); // Récupérer le nom de la zone
+    var meanValue = ee.Number(feat.get("mean")).format('%.1f'); // Formater la valeur moyenne à 1 chiffre après la virgule
+     
+     // Combiner le nom de la zone avec la valeur moyenne, séparés par " : "
+var name = zoneName.cat(' : ').cat(meanValue);
+     
+     // Appliquer la fonction de normalisation pour remplacer les caractères accentués dans le texte
+name = normalizeString(name); 
+   
+    // Calculer le centroïde (centre géographique) de la zone (la région) pour positionner l'étiquette  
+var centroid = feat.geometry().centroid();
+
+    // Dessiner le texte (étiquette) sur la carte en utilisant les paramètres de style définis
+var t = text.draw(name, centroid, scale, {
+          fontSize: 16,
+          textColor: 'red',
+          outlineWidth: 0.5,
+          outlineColor: 'red'
+     });
+     return t;// Retourner l'étiquette dessinée
+});
+
+// Convertir la liste d'étiquettes en une ImageCollection pour pouvoir les ajouter sur la carte
+var labels_final = ee.ImageCollection(labels);
+// Ajouter la couche des étiquettes à la carte pour visualisation
+Map.addLayer(labels_final, {}, "Polygon label");
 
 
-// Visualisation de la taille des pixels en mètres= resolution spatiale. Un pixel est une zone carrée sur le sol et cette valeur indique les dimensions de cette zone. For eg, si la taille des pixels= 1000metres alors chaque pixel couvre une surface de 1000metres carré sur le terrain
+        // 3- Présentation des caractéristiques de nos rasters
+        // Nous presenterons pour le raster 1
+        
+        // a- Projection : manière dont les  données géographiques sont transformées en coordonnées plates sur une carte (par exemple, WGS84, UTM, etc.).
+        // La projection  est essentielle pour que les distances et les emplacements surla carte soient précis.
+        // Les résultats sont visibles dans la console (2e onglet de la partie juste à droite)
+// Pour le raster
+var projection_raster = raster1.projection();
+print('La projection du raster est :', projection_raster); // Le CRS est EPSG:4326
 
-// Taille des pixels en metres: renvoie la taille que represente un pixel dans la réalité, donc si ans=30m ca veut dire que chaque pixel couvre une surface de 30*30 metres carré
+
+        // b- Taille des pixels en mètre = resolution spatiale = taille que represente un pixel dans la réalité, 
+        // donc si ca renvoie 30m ca veut dire que chaque pixel couvre une surface de 30*30 metres carré
 var scale = projection_raster.nominalScale();
-print('Taille des pixels (mètres) :', scale);
+print('Taille des pixels (mètres) :', scale); // 927.6624232772797m et donc 1000m
+       
+        // Calculons également la taille de l'image en pixels (hauteur et largeur de l'image en pixels)
+var imageInfo = raster1.getInfo();
+print('Taille de l\'image raster :', imageInfo.bands[0].dimensions); //[740,520] et donc 740 pixels en latitude(largeur) et 520 sur la longitude(hauteur)
 
-// Taille de l'image en pixels (hauteur et largeur de l'image en pixels)
-var imageInfo = image.getInfo();
-print('Taille de l\'image raster :', imageInfo.bands[0].dimensions);
-
-// Calcul du nombre total de pixels dans le raster 
-var pixelCount = image.reduceRegion({
+        // c- Calcul du nombre total de pixels dans le raster 
+var pixelCount = raster1.reduceRegion({
   reducer: ee.Reducer.count(),
-  geometry: image.geometry(),
-  scale: scale,
+  geometry: raster1.geometry(),
+  scale: 1000,
   maxPixels: 1e13
 });
-print('Nombre total de pixels dans le raster :', pixelCount);
+print('Nombre total de pixels dans le raster :', pixelCount); // 238536 donc 238536 pixels recouvrent l'image
 
-// Création d'un polygone autour d'un point spécifique qui est l'ANSD
-var pixelSize = 1000;  // Taille du pixel
-var ansdPoint = ee.Geometry.Point([-17.449599, 14.699173]);
-var pixelPolygon = ansdPoint.buffer(pixelSize / 2).bounds();
-print('Polygone du Pixel:', pixelPolygon);
-Map.centerObject(pixelPolygon, 14);
+        // d- Etendue de l'image: la zone géographique qu'elle couvre, définie par les coordonnées de ses limites (latitude minimale, latitude maximale, longitude minimale et longitude maximale)
+var extent = raster1.geometry().bounds();
+print('Extent (limites géographiques) de la couche :', extent); // Il ressort les coordonnées des 4 points du plus petit rectangle dans lequel on peut entierement le Séneal
+// Ou pour visualiser les coordonnées de tous les points extremes de l'image 
+var extent2 = raster1.geometry();
+print('Extent (limites géographiques) de la couche:', extent2); // Il ressort les coordonnées de 20 points distincts
+        
+        // e- Superficie en Km carré (on a divisé par 10e6 pour donc faire la conversion)
+var area = raster1.geometry().area({maxError: 1}).divide(1e6); // la superficie renvoyée est de base en metres carrée mais avec les arguments qu'on a mis, on aura l'erreur maximale à 1metre 
+print('Superficie de la couche (en km²) :', area); //320897.0435743293 Km2
 
-// Afficher une grille de pixels
-var pixelGrid = ee.Image.pixelLonLat()
-  .reproject(projection.atScale(pixelSize))
-  .clip(table);
-Map.addLayer(pixelGrid, {bands: ['latitude'], min: minLat, max: maxLat, palette: ['white', 'black']}, 'Grille de Pixels');
+        // f- Calcul du périmetre en m
+var perimeter = raster1.geometry().perimeter({maxError: 1});
+print('Périmètre de la couche (en mètres) :', perimeter); //2289318.8930446208m
 
-//Ajouter les couches géométriques à la carte 
-Map.addLayer(pixelPolygon, {color: 'red'}, 'Pixel Unique');
-Map.addLayer(table.style({color: 'yellow', fillColor: '00000000'}), {}, 'Shapefile');
-Map.addLayer(image, {min: 0, max: 3000, palette: ['blue', 'green', 'red']}, 'Raster');
+        // g- Calcul du centroide: c'est le point central, représentant le "centre de masse" ou le "centre géographique"
+        // Il est calculé comme la moyenne des coordonnées de tous les sommets
+var centroid = raster1.geometry().centroid();
+print('Centre géométrique de la couche :', centroid);//(-14.46, 14.50)
 
-// Statistiques des pixels 
-var stats = image.reduceRegion({
-  reducer: ee.Reducer.mean().combine(ee.Reducer.minMax(), '', true), // Pour calculer le min,max, moyenne de taille des pixels 
-  geometry: image.geometry(), // Spécifie la region de calcul des stats 
-  scale: 1000 // specifie que chaque pixel representera 1000m de coté
+        // h- Pour presenter globalement les statistiques d'une image avec GEE Javascript, nous pouvons utiliser directly
+        // Pour calculer le min,max, moyenne de taille des pixels par exemple
+var stats = raster1.reduceRegion({
+    reducer: ee.Reducer.mean().combine(ee.Reducer.minMax(), '', true), 
+    geometry: raster1.geometry(), // Spécifie la region de calcul des stats  
+    scale: 1000 
 });
-print('Statistiques des pixels :', stats);
-
-// VISUALISATION DE L'ETENDUE GEOGRAPHIQUE DE L'IMAGE
-var extent = image.geometry().bounds();
-print('Extent (limites géographiques) de la couche Sénégal :', extent);
-
-var extent2 = image.geometry();
-print('Extent (limites géographiques) de la couche Sénégal :', extent2); // La difference ici est que ca sort les coordonnées de tous les points extremes 
-
-// Calcul de la superficie en KM CARRE
-var area = image.geometry().area({maxError: 1}).divide(1e6); // la superficie renvoyée est de base en metres carrée mais avec les arguments qu'on a mis, on aura l'erreur maximale à 1metre et on a divisé par 10e6 pour convertir en KM CARRES
-print('Superficie de la couche Sénégal (en km²) :', area);
-
-// Calcul du périmetre en m
-var perimeter = image.geometry().perimeter({maxError: 1});
-print('Périmètre de la couche Sénégal (en mètres) :', perimeter);
-
-// Calcul du centroide 
-var centroid = image.geometry().centroid();
-print('Centre géométrique de la couche Sénégal :', centroid);
-
+print('Statistiques des pixels :', stats); 

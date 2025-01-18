@@ -9,7 +9,8 @@
 ////                           SENE MALICK                                        /////
 //////////////////////////////////////////////////////////////////////////////////////
 
-/// CONSIGNE:
+////         ============== CONSIGNE =================
+
 /// SECTION 1 : DONNEES VECTORIELLES 
 ///     - Importer les pays 
 ///     - Calculs statistiques: nombre de géométries suivant les levels, superficie de chaque feature, projection, CRS, Extent, centroides
@@ -19,71 +20,82 @@
 ///     - Calcul de moyenne, médiane, écart type, minimum, maximum, et retourner une seule image pour chaque statistique
 
 
-///////////////////////////////////////////SECTION1////////////////////////////////////////////////
+///                               ============== SECTION 1  =================
+///                     A- IMPORTATION DES SHAPEFILES 
 
-/// IMPORTATION DES SHAPEFILES 
-var image_SN = ee.Image("projects/ee-aydenfog662/assets/201501_Global_Travel_Time_to_Cities_SEN"),
-    Madagascar = ee.FeatureCollection("projects/ee-aydenfog662/assets/geoBoundaries-MDG-ADM0"),
-    Madagascar_regions = ee.FeatureCollection("projects/ee-aydenfog662/assets/geoBoundaries-MDG-ADM1"),
-    Madagascar_provinces = ee.FeatureCollection("projects/ee-aydenfog662/assets/geoBoundaries-MDG-ADM2"),
-    Madagascar_arrondissements = ee.FeatureCollection("projects/ee-aydenfog662/assets/geoBoundaries-MDG-ADM3"),
-    Parasite_Rate_MDG_2022 = ee.Image("projects/ee-aydenfog662/assets/202406_Global_Pf_Parasite_Rate_MDG_2022"),
-    Parasite_Rate_MDG_2021 = ee.Image("projects/ee-aydenfog662/assets/202406_Global_Pf_Parasite_Rate_MDG_2021"),
-    Parasite_Rate_MDG_2020 = ee.Image("projects/ee-aydenfog662/assets/202406_Global_Pf_Parasite_Rate_MDG_2020"),
-    Parasite_Rate_MDG_2019 = ee.Image("projects/ee-aydenfog662/assets/202406_Global_Pf_Parasite_Rate_MDG_2019"),
-    Parasite_Rate_MDG_2018 = ee.Image("projects/ee-aydenfog662/assets/202406_Global_Pf_Parasite_Rate_MDG_2018"),
-    Madagascar_communes = ee.FeatureCollection("projects/ee-aydenfog662/assets/geoBoundaries-MDG-ADM4");
+// Importation des shapefiles et rasters
+var  Parasite_Rate_MDG_2022 = ee.Image("projects/ee-fogwoungsarahlauretp2/assets/TP2_StatistiqueExploratoireSpatiale_ENSAE2024_ISEP3/202406_Global_Pf_Parasite_Rate_MDG_2022");
+var  Parasite_Rate_MDG_2021 = ee.Image("projects/ee-fogwoungsarahlauretp2/assets/TP2_StatistiqueExploratoireSpatiale_ENSAE2024_ISEP3/202406_Global_Pf_Parasite_Rate_MDG_2021");
+var  Parasite_Rate_MDG_2020 = ee.Image("projects/ee-fogwoungsarahlauretp2/assets/TP2_StatistiqueExploratoireSpatiale_ENSAE2024_ISEP3/202406_Global_Pf_Parasite_Rate_MDG_2020");
+var  Parasite_Rate_MDG_2019 = ee.Image("projects/ee-fogwoungsarahlauretp2/assets/TP2_StatistiqueExploratoireSpatiale_ENSAE2024_ISEP3/202406_Global_Pf_Parasite_Rate_MDG_2019");
+var  Parasite_Rate_MDG_2018 = ee.Image("projects/ee-fogwoungsarahlauretp2/assets/TP2_StatistiqueExploratoireSpatiale_ENSAE2024_ISEP3/202406_Global_Pf_Parasite_Rate_MDG_2018");
+var    Madagascar = ee.FeatureCollection("projects/ee-fogwoungsarahlauretp2/assets/TP2_StatistiqueExploratoireSpatiale_ENSAE2024_ISEP3/geoBoundaries-MDG-ADM0");
+var    Madagascar_regions = ee.FeatureCollection("projects/ee-fogwoungsarahlauretp2/assets/TP2_StatistiqueExploratoireSpatiale_ENSAE2024_ISEP3/geoBoundaries-MDG-ADM1");
+var    Madagascar_provinces = ee.FeatureCollection("projects/ee-fogwoungsarahlauretp2/assets/TP2_StatistiqueExploratoireSpatiale_ENSAE2024_ISEP3/geoBoundaries-MDG-ADM2");
+var    Madagascar_arrondissements = ee.FeatureCollection("projects/ee-fogwoungsarahlauretp2/assets/TP2_StatistiqueExploratoireSpatiale_ENSAE2024_ISEP3/geoBoundaries-MDG-ADM3");
+var    Madagascar_communes = ee.FeatureCollection("projects/ee-fogwoungsarahlauretp2/assets/TP2_StatistiqueExploratoireSpatiale_ENSAE2024_ISEP3/geoBoundaries-MDG-ADM4");
 
-// Ajout à la carte des couches representant les differents niveaux administratifs de Madagascar que sont le pays puis
-// regions, provinces, arrondissements et communes 
+// Ajout des couches à la carte
+// Les découpages administratifs sont successivement regions, provinces, arrondissements et communes 
 Map.addLayer(Madagascar, {color: 'red'}, 'Madagascar');
 Map.addLayer(Madagascar_regions, {color: 'purple'}, 'Madagascar_regions');
 Map.addLayer(Madagascar_provinces, {color: 'green'}, 'Madagascar_provinces');
 Map.addLayer(Madagascar_arrondissements, {color: 'yellow'}, 'Madagascar_arrondissements');
 Map.addLayer(Madagascar_communes, {color: 'blue'}, 'Madagascar_communes');
-
-// Centrage de la carte sur Madagascar
 Map.centerObject(Madagascar, 4);
 
-// **CALCUL ET AFFICHAGE du nombre des géométries suivant chaque niveau 
-//il correspond au nombre de formes ou objets distincts (polygone, points ou lignes) existant sur une couche indexée
+///                     B- NOMBRE DE GEOMETRIES POUR CHACUN DES DECOUPAGES ADMINISTRATIFS
+
+// Nombre de géométries au niveau pays 
 var geometrie_Madagascar = Madagascar.size();
 print('Geometries de la couche Madagascar :', geometrie_Madagascar);
 
+// Nombre de géométries au niveau régions 
 var geometrie_Regions = Madagascar_regions.size();
 print('Geometries de la couche Madagascar_Regions :', geometrie_Regions);
 
+// Nombre de géométries au niveau provinces 
 var geometrie_provinces = Madagascar_provinces.size();
 print('Geometries de la couche Madagascar_provinces :', geometrie_provinces);
 
+// Nombre de géométries au niveau arrondissement
 var geometrie_arrondissements = Madagascar_arrondissements.size();
 print('Geometries de la couche Madagascar_arrondissements :', geometrie_arrondissements);
 
+// Nombre de géométries au niveau communes 
 var geometrie_communes = Madagascar_communes.size();
 print('Geometries de la couche Madagascar_communes :', geometrie_communes);
 
-//**CALCUL et AFFICHAGE de la superficie pour chaque niveau
-/// Superficie du pays
+///                     C- CALCUL DE SUPERFICIE
+
+// Superficie au niveau pays
+
+      /// First way (the easiest one)
+var area = Madagascar.geometry().area({maxError: 1}).divide(1e6); // la superficie renvoyée est de base en metres carrée mais avec les arguments qu'on a mis, on aura l'erreur maximale à 1metre et on a divisé par 10e6 pour convertir en KM CARRES
+print('Superficie de la couche Madagascar (en km²) :', area);
+    /// Second way , nous allons écrire une fonction qu'on va pouvoir appliquer aux autres découpages administratifs, 
+    /// car la méthode précédente ne peut pas être utilisée lorsqu'on a plusieurs features pour le shapefile    
+
 var featuresWithArea = Madagascar.map(function(feature) {
         var area = feature.geometry().area().divide(1e6);  // Convertir en km²
         return feature.set('area_km2', area);  
-      });
-      featuresWithArea.evaluate(function(fc) {
-        var totalArea = 0;
+      }); // Pour chaque feature of the collection: calculer la superficie, convertit en Km2, ajouter comme nouvelle propriété (la propriété sera appelée area_km2)
+      featuresWithArea.evaluate(function(fc) { // Pour convertir en un format utilisable dans Javascript
+        // Comme ici, c'est le niveau pays, aire=somme des aires dans les différents features.   
+        var totalArea = 0;  // On initialise d'abord cette aire à 0
         fc.features.forEach(function(f) {
           var area = f.properties.area_km2;
           print('Superficie de la géométrie_pays (km²) :', area);
           totalArea += area;
-        });
-      }); // Ici on écrit une fonction qui va calculer la superficie des differentes formes géometriques contenues dans la couche indexée
-      
-//OU SIMPLEMENT
+        });// Nous parcourons donc toutes les features et sommons les aires
+      });
+//// EXPLICATION GLOBALE DE CE QUI PRECEDE: On calcule la superficie de chaque zone en Km2, 
+      ///  ajouter cette information comme nouvelle propriété à chaque zone
+      ///   Parcourir toutes les zones donc et mettre leur superficie
 
-var area = Madagascar.geometry().area({maxError: 1}).divide(1e6); // la superficie renvoyée est de base en metres carrée mais avec les arguments qu'on a mis, on aura l'erreur maximale à 1metre et on a divisé par 10e6 pour convertir en KM CARRES
-print('Superficie de la couche Madagascar (en km²) :', area);
+// Superficie au niveau régions
 
-/// Superficie des régions
- var featuresWithArea = Madagascar_regions.map(function(feature) {
+var featuresWithArea = Madagascar_regions.map(function(feature) {
         var area = feature.geometry().area().divide(1e6);  // Convertir en km²
         return feature.set('area_km2', area);  // Ajouter la superficie comme propriété
       });
@@ -92,57 +104,77 @@ print('Superficie de la couche Madagascar (en km²) :', area);
         fc.features.forEach(function(f) {
           var area = f.properties.area_km2;
           print('Superficie de la géométrie_région (km²) :', area);
-          totalArea += area; // On pouvait visualiser ceci à la fin pour s'assurer aue ca donne bien la superficie totale du Sénégal
+          totalArea += area;
         });
       });  
 
-//PROVINCES 
+//  Superficie au niveau  provinces
+
 var featuresWithArea = Madagascar_provinces.map(function(feature) {
         var area = feature.geometry().area().divide(1e6);  // Convertir en km²
         return feature.set('area_km2', area);  // Ajouter la superficie comme propriété
       });
 
-///ARRONDISSEMENTS
+//  Superficie au niveau arrondissement
 var featuresWithArea = Madagascar_arrondissements.map(function(feature) {
         var area = feature.geometry().area().divide(1e6);  // Convertir en km²
         return feature.set('area_km2', area);  // Ajouter la superficie comme propriété
       });
       
-///COMMUNES 
+//  Superficie au niveau communes
 var featuresWithArea = Madagascar_communes.map(function(feature) {
         var area = feature.geometry().area().divide(1e6);  // Convertir en km²
         return feature.set('area_km2', area);  // Ajouter la superficie comme propriété
       });
-  
-    
-    
-//**CALCUL et AFFICHAGE du périmetre de Madagascar
-var perimeter = Madagascar.geometry().perimeter({maxError: 1});
-print('Périmètre de la couche Madagascar (en mètres) :', perimeter);
 
-//** AFFICHAGE DU CRS (PROJECTION ET DATUM)
-// DATUM définit la forme et la taille de la Terre ainsi que l'origine des coordonnées utilisées pour localiser des points sur cette surface
-// La PROJECTION est la manière dont la surface sphérique de la Terre est aplatie pour être représentée en 2D.
+///                     D- CALCUL DU PERIMETRE DE MADAGASCAR
+
+var perimeter = Madagascar.geometry().perimeter({maxError: 1});
+print('Périmètre de la couche Madagascar (en mètres) :', perimeter); 
+     
+///                     E- AFFICHAGE DU CRS (Projection et datum)
+
+// Pour le shapefile
 var projection_Madagascar = Madagascar.geometry().projection();
 print('Projection de la couche Madagascar :', projection_Madagascar);
-      // OU on transforme en image pour appliquer directement la fonction .projection
+      // SECOND METHOD on transforme en image pour appliquer directement la fonction .projection
 var image_Madagascar = ee.Image.pixelLonLat().clip(Madagascar); // Créez une image avec des données de latitude/longitude
-var projection_Madagascar = image_Madagascar.projection();
-print('Projection du raster est :', projection_Madagascar);
+var projection_Madagascar2 = image_Madagascar.projection();
+print('Projection du raster est :', projection_Madagascar2);
+// Pour le raster
+var projection_raster = Parasite_Rate_MDG_2018.projection();
+print('Projection du raster est :', projection_raster);
 
-//** EXTENT (Etendue): il s'agit des coordonnées (lattitude/longitude) maximal et minimal
-//En d’autres termes, c’est la plus petite boite rectangulaire qui contient l’ensemble des données géospatiales d’un objet.
+///                   F- Taille des pixels : renvoie la taille que represente un pixel dans la réalité, donc si on a 30m ca veut dire que chaque pixel couvre une surface de 30*30 metres carré
+// Taille en mètres
+var scale = projection_raster.nominalScale();
+print('Taille des pixels (mètres) :', scale);
+// Taille de l'image en terme de pixels (hauteur et largeur de l'image en pixels)
+var imageInfo = Parasite_Rate_MDG_2018.getInfo();
+print('Taille de l\'image raster :', imageInfo.bands[0].dimensions);
+// Calcul du nombre total de pixels dans le raster 
+var pixelCount = Parasite_Rate_MDG_2018.reduceRegion({
+  reducer: ee.Reducer.count(),
+  geometry: Parasite_Rate_MDG_2018.geometry(),
+  scale: scale,
+  maxPixels: 1e13
+});
+print('Nombre total de pixels dans le raster :', pixelCount);
 
+///                   G- Etendue
+// Les coordonnées des 4 points du plus petit rectangle dans lequel on peut entierement le Sénegal
+var extent = Parasite_Rate_MDG_2018.geometry().bounds();
+print('Extent (limites géographiques) de la couche Madagascar :', extent);
+// On peut également ressortir les coordonnées de tous les points extremes 
+var extent2 = Parasite_Rate_MDG_2018.geometry();
+print('Extent (limites géographiques) de la couche Madagascar :', extent2); 
+// Extent du shapefile
 var extent_Madagascar = Madagascar.geometry().bounds();
 print('Extent de la couche Madagascar :', extent_Madagascar);
-          ///FAIRE LA DIFFERENCE
-var extent2 = Parasite_Rate_MDG_2018.geometry();
-print('Extent (limites géographiques) de la couche Madagascar :', extent2); // La difference ici est que ca sort les coordonnées de tous les points extremes 
 
-//**CENTROIDES POUR CHAQUE DECOUPAGE ET VISUALISATION : 
-// Un centroïde est le point central d'une géométrie, souvent utilisé pour représenter un polygone par un seul point. 
+///                   H- Centroides 
 
-      // FONCTION POUR LA VISUALISATION
+// FONCTION POUR LA VISUALISATION
 function addCentroidsLayer(featureCollection, layerName, color) {
       var centroidsLayer = featureCollection.map(function(feature) {
         return ee.Feature(feature.get('centroid'));  // Récupérer le centroïde
@@ -150,7 +182,7 @@ function addCentroidsLayer(featureCollection, layerName, color) {
     Map.addLayer(centroidsLayer.style({color: color, pointSize: 5}), {}, layerName);
     }
 
-///Centroide_PAYS
+// Au niveau pays
 var pays_centroids = Madagascar.map(function(feature) {
         var centroid = feature.geometry().centroid();
         return feature.set('centroid', centroid);  // Ajouter le centroïde aux propriétés
@@ -165,7 +197,7 @@ var pays_centroids = Madagascar.map(function(feature) {
 addCentroidsLayer(pays_centroids, 'Centroïdes - Pays', 'blue');
 
 
-//Centroide_REGIONS
+// Au niveau régions
       var region_centroids = Madagascar_regions.map(function(feature) {
         var centroid = feature.geometry().centroid();
         return feature.set('centroid', centroid);  // Ajouter le centroïde aux propriétés
@@ -180,21 +212,21 @@ addCentroidsLayer(pays_centroids, 'Centroïdes - Pays', 'blue');
 addCentroidsLayer(region_centroids, 'Centroïdes - Region', 'yellow');
 
       
-//Centroide_PROVINCES
+// Au niveau provinces
       var province_centroids = Madagascar_provinces.map(function(feature) {
         var centroid = feature.geometry().centroid();
         return feature.set('centroid', centroid);  // Ajouter le centroïde aux propriétés
       });
 addCentroidsLayer(province_centroids, 'Centroïdes - Province', 'red');
       
-//Centroide_ARRONDISSEMENTS
+// Au niveau arrondissement
       var arrondissement_centroids = Madagascar_arrondissements.map(function(feature) {
         var centroid = feature.geometry().centroid();
         return feature.set('centroid', centroid);  // Ajouter le centroïde aux propriétés
       });
 addCentroidsLayer(arrondissement_centroids, 'Centroïdes - Arrondissement', 'green');
 
-//Centroide_COMMUNES
+// Au niveau communes
       var communes_centroids = Madagascar_communes.map(function(feature) {
         var centroid = feature.geometry().centroid();
         return feature.set('centroid', centroid);  // Ajouter le centroïde aux propriétés
@@ -202,7 +234,7 @@ addCentroidsLayer(arrondissement_centroids, 'Centroïdes - Arrondissement', 'gre
 addCentroidsLayer(communes_centroids, 'Centroïdes - Commune', 'purple');
 
 
-/////////////////////////////////////    SECTION2     /////////////////////////////////////////
+///                               ============== SECTION 2  =================
 
 Map.addLayer(Parasite_Rate_MDG_2022, {} ,'Parasite_Rate_MDG_2022');
 Map.addLayer(Parasite_Rate_MDG_2021, {} ,'Parasite_Rate_MDG_2021');
@@ -210,42 +242,10 @@ Map.addLayer(Parasite_Rate_MDG_2020, {} ,'Parasite_Rate_MDG_2020');
 Map.addLayer(Parasite_Rate_MDG_2019, {} ,'Parasite_Rate_MDG_2019');
 Map.addLayer(Parasite_Rate_MDG_2018, {} ,'Parasite_Rate_MDG_2018');
 
-// Pour afficher la projection pour un raster
-var projection_raster = Parasite_Rate_MDG_2018.projection();
-print('Projection du raster est :', projection_raster);
-
-// Taille des pixels en metres (resolution spatiale): renvoie la taille que represente un pixel dans la réalité, donc si on a 30m ca veut dire que chaque pixel couvre une surface de 30*30 metres carré
-//Un pixel est une zone carrée sur le sol et cette valeur indique les dimensions de cette zone. For example, si la taille des pixels= 1000metres alors chaque pixel couvre une surface de 1000metres carré sur le terrain
-var scale = projection_raster.nominalScale();
-print('Taille des pixels (mètres) :', scale);
-
-// Taille de l'image en pixels (hauteur et largeur de l'image en pixels)
-var imageInfo = Parasite_Rate_MDG_2018.getInfo();
-print('Taille de l\'image raster :', imageInfo.bands[0].dimensions);
-
-// Calcul du nombre total de pixels dans le raster 
-var pixelCount = Parasite_Rate_MDG_2018.reduceRegion({
-  reducer: ee.Reducer.count(),
-  geometry: Parasite_Rate_MDG_2018.geometry(),
-  scale: scale,
-  maxPixels: 1e13
-});
-print('Nombre total de pixels dans le raster :', pixelCount);
-
-// Autres statistiques
-var stats = Parasite_Rate_MDG_2018.reduceRegion({
-  reducer: ee.Reducer.mean().combine(ee.Reducer.minMax(), '', true), // Pour calculer le min,max, moyenne de taille des pixels 
-  geometry: Parasite_Rate_MDG_2018.geometry(), 
- scale: scale 
-});
-print('Statistiques 2018:', stats);
-
-
-///////////// EFFECTUONS MAINTENANT LES CALCULS DEMANDES
 //CREATION D'UNE COLLECTION D'IMAGES A PARTIR DE CELLES IMPORTEES
 var malariaCollection = ee.ImageCollection([Parasite_Rate_MDG_2022, Parasite_Rate_MDG_2021, Parasite_Rate_MDG_2020, Parasite_Rate_MDG_2019, Parasite_Rate_MDG_2018]);
  
-          //**SANS ENLEVER LES DONNEES MANQUANTES 
+          // AT FIRST, SI ON FAIT CELA SANS ENLEVER LES DONNEES MANQUANTES 
 // Calcul de la moyenne
 var moyenne = malariaCollection.reduce(ee.Reducer.mean());
 print('La moyenne:', moyenne);
@@ -266,80 +266,61 @@ print('Minimum:', min);
 var max = malariaCollection.reduce(ee.Reducer.max());
 print('Maximum:', max);
 
-///ON PEUT EN OUTRE:
-// Concatenons ensemble les statistiques comme des bandes différentes
+
+// POUR LA VISUALISATION
+// Concatenons ensemble et dans la variable statistiques, chacune des bandes represente une statistique differente
 var statistiques = moyenne.addBands(mediane)
                           .addBands(ecartType)
                           .addBands(min)
                           .addBands(max);
 
-
-// Sélectionner les bandes d'intérêt et renommer les bandes
+// *** Sélection et renommage des bandes statistiques ***
+// Liste des noms originaux des bandes représentant différentes statistiques.
 var bandeNames = ['moyenne', 'mediane', 'ecart_type', 'min', 'max'];
+// Comptons le nombre de bandes disponibles dans l'image `statistiques`.
 var bandeCount = statistiques.bandNames().size();  // Compter le nombre de banades pour chaque stat
 
-// Renommer les bandes uniquement si le nombre de bandes est correct
+// Générons de nouveaux noms pour les bandes si le nombre de bandes correspond.
+// Exemple : si 5 bandes sont présentes, elles seront renommées en "statistique_0", "statistique_1", etc.
 var nouveauNoms = ee.List.sequence(0, bandeCount.subtract(1)).map(function(i) {
-  // Utilisation d'un format valide pour formater les indices
-  return ee.String('statistique_').cat(ee.Number(i).format('%d'));  // Formater les indices comme entiers
+  return ee.String('statistique_').cat(ee.Number(i).format('%d'));  
 });
 
-// Renommer les bandes
+// Renommons les bandes de l'image `statistiques` avec les nouveaux noms générés.
 statistiques = statistiques.rename(nouveauNoms);
 
-// Affichage des couches avec les noms corrects sur le raster resultant avec chacune des statistiques correspondant à une seule image
-Map.centerObject(Madagascar, 6);
-// Utiliser les noms corrects des bandes après renommage
+// Ajoutons les couches pour chaque bande en les associant à un style de visualisation.
+Map.centerObject(Madagascar, 6); // Pour centrer la carte sur Madagascar
 Map.addLayer(statistiques.select('statistique_0'), {min: 0, max: 1, palette: ['blue', 'green', 'red']}, 'Moyenne');
 Map.addLayer(statistiques.select('statistique_1'), {min: 0, max: 1, palette: ['yellow', 'orange', 'brown']}, 'Médiane');
-Map.addLayer(statistiques.select('statistique_2'), {min: 0, max: 0.5, palette: ['white', 'purple']}, 'Écart-Type');
+Map.addLayer(statistiques.select('statistique_2'), {min: 0, max: 1, palette: ['white', 'purple']}, 'Écart-Type');
 Map.addLayer(statistiques.select('statistique_3'), {min: 0, max: 1, palette: ['green', 'orange']}, 'Min');
 Map.addLayer(statistiques.select('statistique_4'), {min: 0, max: 1, palette: ['pink', 'yellow']}, 'Max');
 
-// Exporter l'image résultante si on veut
+// *** Exportation de l'image résultante ***
 Export.image.toDrive({
-  image: statistiques,
-  description: 'Statistiques_Malaria_Madagascar',
-  scale: scale,
-  region: Madagascar.geometry(),  
-  fileFormat: 'GeoTIFF'
+  image: statistiques, // L'image à exporter (avec les bandes renommées).
+  description: 'Statistiques_Malaria_Madagascar', // Nom du fichier exporté.
+  scale: 1000,  // Résolution spatiale en mètres.
+  region: Madagascar.geometry(),  // Zone géographique d'intérêt (ici, Madagascar).
+  fileFormat: 'GeoTIFF'   // Format de fichier (GeoTIFF).
 });
 
-
-        //** EN NE PAS CONSIDERANT LES VALEURS MANQUANTES
-// Masquer les valeurs de -9999 (NA)
+          // THE RIGHT WAY: EN NE PAS CONSIDERANT LES VALEURS MANQUANTES
+// Masquons les valeurs de -9999 (NA)
 var imageSansNA = statistiques.updateMask(statistiques.neq(-9999));
 
-// Calcul du minimum sans NA
+// Calculons des statistiques de l'image sans NA
 var maxImage = imageSansNA.reduce(ee.Reducer.max());
-
 var minimumImage = imageSansNA.reduce(ee.Reducer.min());
 var medianeImage = imageSansNA.reduce(ee.Reducer.median());
 var moyenneImage = imageSansNA.reduce(ee.Reducer.mean());
 var ecarttypeImage = imageSansNA.reduce(ee.Reducer.stdDev());
-// Utiliser les noms corrects des bandes après renommage
+
+// Utilisons les noms corrects des bandes après renommage
 Map.addLayer(moyenneImage, {min: 0, max: 1, palette: ['blue', 'green', 'red']}, 'Moyenne2');
 Map.addLayer(medianeImage, {min: 0, max: 0.5, palette: ['yellow', 'orange']}, 'Médiane2');
 Map.addLayer(ecarttypeImage, {min: 0, max: 1, palette: ['white', 'purple']}, 'Écart-Type2');
 Map.addLayer(minimumImage, {min: 0, max: 0.1, palette: ['red', 'darkblue']}, 'Min2');
 Map.addLayer(maxImage, {min: 0, max: 0.1, palette: ['pink', 'red']}, 'Max2');
 
-/////// STEPPING FORWARD
-
-// Création d'un polygone autour d'un point spécifique qui est l'ANSD
-//var pixelSize = 1000;  // Taille du pixel
-//var ansdPoint = ee.Geometry.Point([-17.449599, 14.699173]);
-//var pixelPolygon = ansdPoint.buffer(pixelSize / 2).bounds();
-//print('Polygone du Pixel:', pixelPolygon);
-//Map.centerObject(pixelPolygon, 14);
-
-// Afficher une grille de pixels
-//var pixelGrid = ee.Image.pixelLonLat()
-  //.reproject(projection.atScale(pixelSize))
-  //.clip(table);
-//Map.addLayer(pixelGrid, {bands: ['latitude'], min: minLat, max: maxLat, palette: ['white', 'black']}, 'Grille de Pixels');
-
-//Ajouter les couches géométriques à la carte 
-//Map.addLayer(pixelPolygon, {color: 'red'}, 'Pixel Unique');
-//Map.addLayer(table.style({color: 'yellow', fillColor: '00000000'}), {}, 'Shapefile');
-//Map.addLayer(image, {min: 0, max: 3000, palette: ['blue', 'green', 'red']}, 'Raster');
