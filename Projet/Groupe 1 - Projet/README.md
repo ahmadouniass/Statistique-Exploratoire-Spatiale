@@ -20,6 +20,6 @@ indicateurs sélectionnés. Le tout est enrichi par des descriptions dynamiques 
 filtrage, favorisant une analyse ciblée et intuitive des données géospatiales et des variations 
 locales.
 
-  Lien vers l'application [Link to our App](https://kcgirl1234.shinyapps.io/Groupe1_Projet_SES/).
+  Lien vers l'application 
 
 
