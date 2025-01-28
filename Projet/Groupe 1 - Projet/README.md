@@ -1,12 +1,12 @@
 # Projet de statistique exploratoire spatiale
 ## About the project
 Ce projet est réalisé par :
-- COULIBALY KHADIDIATOU;
-- DIENG SAMBA;
-- ONANENA AMANA JEANNE DE LA FLECHE;
--  NDONG TAMSIR;
+- COULIBALY KHADIDIATOU ;
+- DIENG SAMBA ;
+- ONANENA AMANA JEANNE DE LA FLECHE ;
+-  NDONG TAMSIR ;
 
-  Elèves ingénieur statisticien économiste en 3e année cycle long à l'ENSAE Pierre NDIAYE.
+  Elèves ingénieur statisticien économiste en 3e année cycle long à l'ENSAE Pierre NDIAYE. Il s'inscrit dans le cadre du module de Statistique exploratoire spatiale dispensé par M. HEMA Aboubacar.
 
   ## About the app 
   Cette application interactive permet de visualiser des indicateurs, tels que le NDVI, MNDWI, 
@@ -20,6 +20,6 @@ indicateurs sélectionnés. Le tout est enrichi par des descriptions dynamiques 
 filtrage, favorisant une analyse ciblée et intuitive des données géospatiales et des variations 
 locales.
 
-  Lien vers l'application 
+  The App is available on: [Link to the App](https://kcgirl1234.shinyapps.io/Cartographie_indicateurs/)
 
 
