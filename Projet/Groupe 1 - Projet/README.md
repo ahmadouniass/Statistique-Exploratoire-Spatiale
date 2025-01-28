@@ -6,7 +6,8 @@ Ce projet a été réalisé par :
 - DIENG SAMBA ;
 - ONANENA AMANA JEANNE DE LA FLECHE ;
 - NDONG TAMSIR ;
-  Elèves ingénieur statisticien économiste en 3e année de formation cycle long à l'ENSAE Pierre NDIAYE de Dakar.
+  
+Elèves ingénieur statisticien économiste en 3e année de formation cycle long à l'ENSAE Pierre NDIAYE de Dakar.
 
 ## About the App
 Cette application interactive permet de visualiser des indicateurs, tels que le NDVI, MNDWI, 
