@@ -1,0 +1,13 @@
+name: Groupe1_Projet_SES
+title: Groupe1_Projet_SES
+username: kcgirl1234
+account: kcgirl1234
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 13828812
+bundleId: 9711589
+url: https://kcgirl1234.shinyapps.io/Groupe1_Projet_SES/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: Projet_v15.R

@@ -1,0 +1,12 @@
+name: Groupe_1_SES
+title: Groupe_1_SES
+username: kcgirl1234
+account: kcgirl1234
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 13827413
+bundleId:
+url: https://kcgirl1234.shinyapps.io/Groupe_1_SES/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
