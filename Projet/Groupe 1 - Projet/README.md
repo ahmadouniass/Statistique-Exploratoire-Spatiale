@@ -1,5 +1,5 @@
 # Projet de statistique exploratoire spatiale
-## About the projet
+## About the project
 Ce projet est réalisé par :
 - COULIBALY KHADIDIATOU;
 - DIENG SAMBA;
