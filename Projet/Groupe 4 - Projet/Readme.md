@@ -22,7 +22,7 @@ Cette application, intitulée "Spatial Exploratory Statistics", a été dévelop
 
 2. **Analyse des Indicateurs :**
 
-   - Calcul et affichage d'indices spectraux (végétation, sols, urbanisation, eau).
+   - Calcul et affichage d'indices spectraux (végétation, sols, urbanisation, eau), des taux de prévalence de la malaria ainsi que des CDI.
    - Description détaillée des indicateurs sélectionnés directement dans l'application.
 
 3. **Filtres Dynamiques :**
@@ -48,6 +48,7 @@ Cette application, intitulée "Spatial Exploratory Statistics", a été dévelop
 5. Exportez les résultats en utilisant le bouton "Download Raster".
 
 
+Voici le lien d'une [vidéo](https://drive.google.com/file/d/1I3PlpqTCpulG0JXlAGYirTqd8-oaiUHu/view?usp=sharing) explicative montrant comment l'application fonctionne.
 
-Merci d'utiliser cette application pour vos analyses spatiales. Vos retours et suggestions sont les bienvenus !
+Vos retours et suggestions sont les bienvenus !
 
