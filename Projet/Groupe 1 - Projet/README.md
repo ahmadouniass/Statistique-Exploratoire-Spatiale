@@ -20,6 +20,6 @@ indicateurs sélectionnés. Le tout est enrichi par des descriptions dynamiques 
 filtrage, favorisant une analyse ciblée et intuitive des données géospatiales et des variations 
 locales.
 
-  Cette application est disponible sur le lien : [Link to the App](https://kcgirl1234.shinyapps.io/Cartographie_indicateurs/)
+  Cette application est disponible à partir du lien : [Link to the App](https://kcgirl1234.shinyapps.io/Cartographie_indicateurs/)
 
 
