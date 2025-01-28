@@ -1,5 +1,5 @@
 # Projet de statistique exploratoire spatiale
-## About the project
+## A propos du projet
 Ce projet est réalisé par :
 - COULIBALY KHADIDIATOU ;
 - DIENG SAMBA ;
@@ -8,7 +8,7 @@ Ce projet est réalisé par :
 
   Elèves ingénieur statisticien économiste en 3e année cycle long à l'ENSAE Pierre NDIAYE. Il s'inscrit dans le cadre du module de Statistique exploratoire spatiale dispensé par M. HEMA Aboubacar.
 
-  ## About the app 
+  ## A propos de l'application
   Cette application interactive permet de visualiser des indicateurs, tels que le NDVI, MNDWI, 
 BSI_1 et NDBI, pour plusieurs pays (Sénégal, Burkina Faso, Madagascar, Cameroun). Elle 
 intègre des données spatiales à différents niveaux administratifs et des images raster pour 
@@ -20,6 +20,6 @@ indicateurs sélectionnés. Le tout est enrichi par des descriptions dynamiques 
 filtrage, favorisant une analyse ciblée et intuitive des données géospatiales et des variations 
 locales.
 
-  The App is available on: [Link to the App](https://kcgirl1234.shinyapps.io/Cartographie_indicateurs/)
+  Cette application est disponible sur le lien : [Link to the App](https://kcgirl1234.shinyapps.io/Cartographie_indicateurs/)
 
 
