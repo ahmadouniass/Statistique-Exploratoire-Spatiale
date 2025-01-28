@@ -1,10 +1,10 @@
 # README
 Ce projet est réalisé par le groupe 4 constitué par :
 
- - Fogwoung Djoufack Sarah-Laure
- - Niass Ahmadou 
- - Nguemfouo Ngoumtsa Célina
- - Sene Malick
+ - [Fogwoung Djoufack Sarah-Laure](https://github.com/Sarahlaure)
+ - [Niass Ahmadou](https://github.com/ahmadouniass)
+ - [Nguemfouo Ngoumtsa Célina](https://github.com/nncelina)
+ - [Sene Malick](https://github.com/malickseneisep2)
 
 ## Application de Statistiques Spatiales
 
