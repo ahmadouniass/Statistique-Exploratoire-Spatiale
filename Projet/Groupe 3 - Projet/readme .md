@@ -2,7 +2,9 @@
 
 Lien de l'application : [(https://khadijaatou.shinyapps.io/believe/)](https://khadijaatou.shinyapps.io/believe/)
 
-Len vers la vidéo de présentation de l'application : https://drive.google.com/file/d/1rcJx_5g_mNed9juAxTskmMVvpQWreRgP/view?usp=sharing
+Lien vers les codes : [https://github.com/Khadijah19/Nos_codes.git](https://github.com/Khadijah19/Nos_codes/)
+
+Lien vers la vidéo de présentation de l'application : https://drive.google.com/file/d/1rcJx_5g_mNed9juAxTskmMVvpQWreRgP/view?usp=sharing
 
 Logiciels et Applications utilisés :
 R
