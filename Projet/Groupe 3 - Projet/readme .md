@@ -1,6 +1,6 @@
 # Titre du projet : Projet Stat Spatiale 
 
-Lien de l'application : [https://aliounek.shinyapps.io/Projet_Final_Stats_Spatiales/](https://khadijaatou.shinyapps.io/hope/)
+Lien de l'application : [https://khadijaatou.shinyapps.io/hope/](https://khadijaatou.shinyapps.io/hope/)
 
 Len vers la vidéo de présentation de l'application : https://drive.google.com/file/d/1rcJx_5g_mNed9juAxTskmMVvpQWreRgP/view?usp=sharing
 
