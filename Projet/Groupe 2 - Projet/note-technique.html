@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notes techniques de l'application</title>
+  
+    <!-- Description standard -->
+    <meta name="description" content="Page des notes techniques de la plateforme">
+  
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Projet de statistique exploratoire spatiale">
+    <meta property="og:description" content="Une plateforme web qui présente un résumé des indicateurs statistiques spatiaux calculés au niveau administratif pour le Sénégal et le Burkina Faso.">
+    <meta property="og:image" content="https://raw.githubusercontent.com/PapaAmad/Plateforme-HEMA/main/assets/img/tag_image.jpeg">
+    <meta property="og:url" content="https://papaamad.github.io/Plateforme-HEMA/">
+    <meta property="og:type" content="website">
+
+  <!-- Favicon -->
+  <link href="assets/img/favicon.jpeg" rel="icon">
+
+  <!-- Bootstrap CSS -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  >
+  
+  <!-- CSS perso -->
+  <link rel="stylesheet" href="css/note-technique.css">
+</head>
+<body>
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="index.html">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             width="24" height="24" viewBox="0 0 24 24" fill="#ffffff">
+          <path d="M12 2C8.13 2 5 5.13 5 9
+                   c0 5.25 7 13 7 13s7-7.75 7-13
+                   c0-3.87-3.13-7-7-7zm0 9.5
+                   c-1.38 0-2.5-1.12-2.5-2.5
+                   s1.12-2.5 2.5-2.5 2.5 1.12
+                   2.5 2.5-1.12 2.5-2.5 2.5z"/>
+        </svg>
+        Plateforme HEMA
+      </a>
+      <button class="navbar-toggler" type="button"
+              data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link active" href="index.html">
+              <svg xmlns="http://www.w3.org/2000/svg"
+                   viewBox="0 0 24 24">
+                <path d="M10 20v-6h4v6h5v-8h3L12
+                         3 2 12h3v8z"/>
+              </svg>
+              Home
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="guide.html">
+              <svg xmlns="http://www.w3.org/2000/svg"
+                   viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48
+                         2 12s4.48 10 10 10 10-4.48
+                         10-10S17.52 2 12 2zm1
+                         17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45
+                         12.9 13 13.5 13 15h-2v-.5c0-1.1.45
+                         -2.1 1.17-2.83l1.24-1.26c.37-.36.59
+                         -.86.59-1.41 0-1.1-.9-2-2-2s-2
+                         .9-2 2H8c0-2.21 1.79-4 4-4s4
+                         1.79 4 4c0 .88-.36 1.68-.93
+                         2.25z"/>
+              </svg>
+              Guide
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">
+              <svg xmlns="http://www.w3.org/2000/svg"
+                   viewBox="0 0 24 24">
+                <path d="M14 2H6c-1.1 0-1.99.9
+                         -1.99 2L4 20c0 1.1.89 2
+                         1.99 2H18c1.1 0 2-.9
+                         2-2V8l-6-6zm2
+                         16H8v-2h8v2zm0-4H8v-2h8v2zm-3
+                         -5V3.5L18.5 9H13z"/>
+              </svg>
+              Note Technique
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+    <!-- CONTENU PRINCIPAL -->
+    <div class="container">
+        <h1 class="animated-title">Note Technique</h1>
+
+        <div class="guide-section">
+            <h2>Méthodologie</h2>
+            <p>La plateforme utilise une architecture web intégrant des applications Shiny pour la visualisation interactive des données spatiales. Les technologies principales incluent R, Shiny, JavaScript, HTML5, et CSS3.</p>
+            
+            <div class="tech-details">
+                <h3>Technologies Utilisées</h3>
+                <ul>
+                    <li><strong>Langages :</strong> R, JavaScript, HTML5, CSS3</li>
+                    <li><strong>Frameworks :</strong> Shiny, Bootstrap</li>
+                    <li><strong>Outils :</strong> GitHub, ShinyApps.io, Google Earth Engine</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="guide-section">
+            <h2>Traitement des Données</h2>
+            <div class="tech-details">
+                <p>Les données spatiales et démographiques sont nettoyées, validées et agrégées au niveau administratif. Les indicateurs statistiques sont calculés à partir de données raster et vectorielles en utilisant des packages R tels que <em>sf</em> et <em>terra</em>.</p>
+                <ol>
+                    <li>Chargement et lecture des shapefiles administratifs.</li>
+                    <li>Traitement des rasters de malaria et de population.</li>
+                    <li>Calcul des indicateurs comme le taux de malaria et les indices spectraux.</li>
+                    <li>Classification des zones basées sur les indicateurs calculés.</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="guide-section">
+            <h2>Spécifications Techniques</h2>
+            <div class="tech-details">
+                <h3>Configuration Requise</h3>
+                <ul>
+                    <li>Navigateurs supportés : Chrome (v70+), Firefox (v65+), Safari (v12+)</li>
+                    <li>Résolution d'écran minimale : 320px</li>
+                    <li>JavaScript activé</li>
+                    <li>R (version 4.0+) et RStudio pour le développement local</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="guide-section">
+            <h2>Mises à jour</h2>
+            <div class="tech-details version-history">
+                <div class="version">
+                    <h3>Version 1.0.0</h3>
+                    <p class="date">Janvier 2025</p>
+                    <ul>
+                        <li>Lancement initial de la plateforme.</li>
+                        <li>Intégration des applications Shiny pour les indicateurs principaux.</li>
+                        <li>Déploiement sur ShinyApps.io et GitHub Pages.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+  <!-- Scripts Bootstrap -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
+  </script>
+  
+  <!-- Script JS -->
+  <script src="js/main.js"></script>
+</body>
+</html>
