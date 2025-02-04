@@ -1,0 +1,200 @@
+/* www/styles.css */
+
+/* General Body Styling */
+body {
+  background-color: #f4f7fa; /* Soft background color for a gentle appearance */
+  font-family: 'Arial', sans-serif; /* Sets a clean and widely supported font */
+  color: #333; /* Dark gray text for better readability */
+  margin: 0; /* Removes default margin */
+  padding: 0; /* Removes default padding */
+}
+
+/* Enlarge font in selectInput / selectizeInput */
+.selectize-input, .selectize-dropdown, .shiny-bound-input {
+  font-size: 1.2rem !important; /* Increases font size for better visibility */
+}
+
+/* Headings */
+h3, h4, h5 {
+  color: #007bff; /* Blue color for headings to make them stand out */
+  font-weight: bold; /* Bold text for emphasis */
+  border-bottom: 2px solid #007bff; /* Adds a blue bottom border to underline headings */
+  padding-bottom: 5px; /* Adds space below the text before the border */
+  margin-bottom: 15px; /* Adds space below the heading */
+}
+
+/* Subheadings */
+h5 {
+  margin-top: 20px; /* Adds space above subheadings */
+}
+
+/* Paragraphs */
+p {
+  font-size: 2rem; /* Enlarged font size for better readability */
+  line-height: 1.6; /* Increased line height for improved text flow */
+}
+
+/* Navbar Styling */
+.navbar {
+  background-color: #1a1d21 !important; /* Dark elegant background color */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Adds a subtle shadow for depth */
+}
+
+.navbar .navbar-brand {
+  color: white !important; /* White text for brand name for contrast */
+  font-weight: bold; /* Bold font for prominence */
+  font-size: 1.5rem; /* Larger font size for brand visibility */
+}
+
+.navbar .nav-link {
+  color: white !important; /* White text for navigation links */
+  font-size: 1rem; /* Slightly enlarged font size */
+  transition: color 0.3s ease; /* Smooth color transition on hover */
+}
+
+.navbar .nav-link:hover {
+  color: #007bff !important; /* Light blue color on hover for interactivity */
+}
+
+/* Tab Content Styling */
+.tab-content {
+  margin-top: 20px; /* Adds space above the tab content */
+  padding: 20px; /* Adds padding inside the tab content */
+  background: white; /* White background for contrast against body */
+  border-radius: 10px; /* Rounded corners for a modern look */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Adds a subtle shadow for depth */
+}
+
+/* Buttons */
+button, .btn {
+  background-color: #007bff; /* Blue background color */
+  color: white; /* White text color */
+  border: none; /* Removes default border */
+  border-radius: 5px; /* Rounded corners */
+  padding: 10px 15px; /* Adds padding for clickable area */
+  cursor: pointer; /* Changes cursor to pointer on hover */
+  font-size: 1rem; /* Sets font size */
+  transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transitions for background and transformation */
+}
+
+button:hover, .btn:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+  transform: translateY(-2px); /* Slight upward movement on hover */
+}
+
+/* Selectors */
+select, .selectize-input {
+  border: 1px solid #ced4da; /* Light gray border */
+  border-radius: 5px; /* Rounded corners */
+  padding: 10px; /* Adds padding inside the select box */
+  font-size: 1rem; /* Sets font size */
+  background-color: #ffffff; /* White background */
+  color: #495057; /* Dark gray text color */
+  transition: box-shadow 0.3s ease, border-color 0.3s ease; /* Smooth transitions for shadow and border */
+}
+
+select:focus, .selectize-input:focus {
+  box-shadow: 0px 0px 5px #007bff; /* Blue shadow on focus */
+  border-color: #007bff; /* Blue border on focus */
+  outline: none; /* Removes default outline */
+}
+
+/* Footer Styling */
+footer {
+  background-color: #343a40; /* Dark background color */
+  color: white; /* White text color */
+  text-align: center; /* Centers the text */
+  padding: 10px 0; /* Adds vertical padding */
+  position: fixed; /* Fixes footer at the bottom */
+  width: 100%; /* Full width */
+  bottom: 0; /* Aligns to the bottom */
+  box-shadow: 0px -2px 4px rgba(0, 0, 0, 0.1); /* Adds a subtle top shadow */
+}
+
+footer a {
+  color: #007bff; /* Blue color for links */
+  text-decoration: none; /* Removes underline from links */
+}
+
+footer a:hover {
+  text-decoration: underline; /* Underlines links on hover */
+}
+
+/* Map Container */
+.map-container {
+  position: relative; /* Establishes a positioning context for absolute children */
+}
+
+/* Administrative Level Panel */
+.admin-panel {
+  position: absolute; /* Positions the panel relative to the nearest positioned ancestor */
+  top: 10px; /* 10px from the top */
+  right: 10px; /* 10px from the right */
+  background: rgba(255, 255, 255, 0.95); /* Slightly opaque white background */
+  border: 2px solid #007bff; /* Solid blue border */
+  border-radius: 10px; /* Rounded corners */
+  padding: 20px; /* Adds padding inside the panel */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3); /* Pronounced shadow for depth */
+  width: 220px; /* Fixed width */
+}
+
+/* Admin Panel Heading */
+.admin-panel h4 {
+  margin-top: 0; /* Removes top margin */
+  color: #007bff; /* Blue color for the heading */
+  font-size: 1.2rem; /* Slightly larger font size */
+}
+
+/* Spacing Between Radio Buttons */
+.admin-panel .radio-inline {
+  margin-right: 10px; /* Space to the right of each radio button */
+}
+
+.admin-panel .radio-inline + .radio-inline {
+  margin-left: 10px; /* Space to the left when another radio button follows */
+}
+
+/* Responsive Design for Small Screens */
+@media (max-width: 768px) {
+  .navbar .navbar-brand {
+    font-size: 1.2rem; /* Smaller font size for brand on small screens */
+  }
+  
+  h3, h4, h5 {
+    font-size: 1.2rem; /* Adjusts heading sizes for better fit */
+  }
+  
+  button, select, .selectize-input {
+    width: 100%; /* Full width elements for better usability */
+    margin-bottom: 10px; /* Adds space below elements */
+  }
+  
+  /* Adjust Map Height on Small Screens */
+  #map {
+    height: 40vh !important; /* Sets map height to 40% of viewport height */
+  }
+  
+  /* Adjust Admin Panel for Small Screens */
+  .admin-panel {
+    width: 90% !important; /* Increases width to 90% */
+    left: 5% !important; /* Centers the panel horizontally */
+    right: auto !important; /* Removes right positioning */
+    top: 10px !important; /* Keeps the panel 10px from the top */
+  }
+}
+
+/* Customize Leaflet Popups */
+.leaflet-popup-content {
+  font-family: 'Arial', sans-serif; /* Consistent font family */
+  font-size: 14px; /* Sets font size */
+  color: #333; /* Dark gray text color */
+}
+
+/* Example Transition for Panels */
+.admin-panel {
+  transition: all 0.3s ease; /* Smooth transition for all properties */
+}
+
+.admin-panel:hover {
+  box-shadow: 0 6px 18px rgba(0,0,0,0.4); /* Enhanced shadow on hover for emphasis */
+}
